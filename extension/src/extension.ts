@@ -3,6 +3,7 @@ import { SidebarProvider } from './sidebar/SidebarProvider';
 import { registerCommands } from './commands';
 import { createStatusBarItem } from './statusBar/statusBar';
 import { SecretStorageFacade } from './auth/secretStorage';
+import { OAuthManager } from './auth/oauth';
 import { McpClient } from './mcp/mcpClient';
 import { initializeProjectContext } from './context/analyzer';
 
@@ -19,6 +20,7 @@ import { initializeProjectContext } from './context/analyzer';
  * - Project context analysis
  */
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+	const oauthManager = new OAuthManager(secretStorage);
 	const secretStorage = new SecretStorageFacade(context.secrets);
 
 	const mcpClient = new McpClient({
@@ -49,6 +51,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	registerCommands(context, {
 		mcpClient,
+		oauthManager,
 		secretStorage,
 		projectContext: projectContextService,
 		revealChat: () => sidebarProvider.reveal()
