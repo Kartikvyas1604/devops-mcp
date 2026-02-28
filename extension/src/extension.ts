@@ -20,47 +20,69 @@ import { initializeProjectContext } from './context/analyzer';
  * - Project context analysis
  */
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-	const secretStorage = new SecretStorageFacade(context.secrets);
-	const oauthManager = new OAuthManager(secretStorage);
+	try {
+		console.log('Genie-ops: Starting activation...');
+		
+		const secretStorage = new SecretStorageFacade(context.secrets);
+		console.log('Genie-ops: SecretStorage initialized');
+		
+		const oauthManager = new OAuthManager(secretStorage);
+		console.log('Genie-ops: OAuthManager initialized');
 
-	const mcpClient = new McpClient({
-		extensionContext: context,
-		secretStorage
-	});
+		const mcpClient = new McpClient({
+			extensionContext: context,
+			secretStorage
+		});
+		console.log('Genie-ops: McpClient created');
 
-	// Start MCP client lazily; failures are surfaced via notifications.
-	await mcpClient.start().catch((error: unknown) => {
-		console.error('Failed to start MCP client', error);
-		void vscode.window.showErrorMessage(
-			'Genie-ops: Failed to start MCP backend. Open the Output panel for details.'
+		// Start MCP client lazily; failures are surfaced via notifications.
+		await mcpClient.start().catch((error: unknown) => {
+			console.error('Failed to start MCP client', error);
+			void vscode.window.showErrorMessage(
+				'Genie-ops: Failed to start MCP backend. Open the Output panel for details.'
+			);
+		});
+		console.log('Genie-ops: MCP client started');
+
+		const projectContextService = initializeProjectContext(context, mcpClient);
+		console.log('Genie-ops: Project context initialized');
+
+		const sidebarProvider = new SidebarProvider(
+			context.extensionUri,
+			mcpClient,
+			secretStorage,
+			projectContextService
 		);
-	});
+		console.log('Genie-ops: Sidebar provider created');
 
-	const projectContextService = initializeProjectContext(context, mcpClient);
+		context.subscriptions.push(
+			vscode.window.registerWebviewViewProvider('genie-ops.chatView', sidebarProvider)
+		);
+		console.log('Genie-ops: Webview provider registered');
 
-	const sidebarProvider = new SidebarProvider(
-		context.extensionUri,
-		mcpClient,
-		secretStorage,
-		projectContextService
-	);
+		registerCommands(context, {
+			mcpClient,
+			oauthManager,
+			secretStorage,
+			projectContext: projectContextService,
+			extensionUri: context.extensionUri,
+			revealChat: () => sidebarProvider.reveal()
+		});
+		console.log('Genie-ops: Commands registered');
 
-	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider('genie-ops.chatView', sidebarProvider)
-	);
-
-	registerCommands(context, {
-		mcpClient,
-		oauthManager,
-		secretStorage,
-		projectContext: projectContextService,
-		extensionUri: context.extensionUri,
-		revealChat: () => sidebarProvider.reveal()
-	});
-
-	const statusBarItem = createStatusBarItem(mcpClient);
-	context.subscriptions.push(statusBarItem);
-	statusBarItem.show();
+		const statusBarItem = createStatusBarItem(mcpClient);
+		context.subscriptions.push(statusBarItem);
+		statusBarItem.show();
+		console.log('Genie-ops: Status bar created');
+		
+		console.log('Genie-ops: Activation completed successfully');
+	} catch (error) {
+		console.error('Genie-ops activation failed:', error);
+		void vscode.window.showErrorMessage(
+			`Genie-ops failed to activate: ${error instanceof Error ? error.message : String(error)}`
+		);
+		throw error;
+	}
 }
 
 /**
