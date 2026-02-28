@@ -25,6 +25,7 @@ import { JiraTool } from './tools/jira.js';
 import { GCPTool } from './tools/gcp.js';
 import { AzureTool } from './tools/azure.js';
 import { KubernetesTool } from './tools/kubernetes.js';
+import { EnvManagementTool } from './tools/envManagement.js';
 import { VibeCodingEngine } from './vibe/vibeEngine.js';
 import { SecretManager } from './secrets/secretManager.js';
 
@@ -70,6 +71,7 @@ class GenieOpsMCPServer {
       new JiraTool(this.secretManager),
       new GCPTool(this.secretManager),
       new AzureTool(this.secretManager),
+      new EnvManagementTool(this.secretManager),
       new KubernetesTool(this.secretManager),
     ];
 

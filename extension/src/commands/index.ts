@@ -110,8 +110,40 @@ export function registerCommands(
 
 	disposables.push(
 		vscode.commands.registerCommand('genie-ops.cloneEnvironment', async () => {
-			void vscode.window.showInformationMessage(
-				'Genie-ops: Environment cloning will appear here once cloud integrations are configured.'
+			const sourceEnv = await vscode.window.showInputBox({
+				prompt: 'Source environment name (e.g., staging)',
+				placeHolder: 'staging'
+			});
+
+			if (!sourceEnv) {
+				return;
+			}
+
+			const targetEnv = await vscode.window.showInputBox({
+				prompt: 'Target environment name (e.g., production)',
+				placeHolder: 'production'
+			});
+
+			if (!targetEnv) {
+				return;
+			}
+
+			await vscode.window.withProgress(
+				{
+					location: vscode.ProgressLocation.Notification,
+					title: `Cloning environment: ${sourceEnv} → ${targetEnv}`,
+					cancellable: false
+				},
+				async () => {
+					const prompt = `[ENV_CLONE] Clone ${sourceEnv} to ${targetEnv}`;
+					const result = await mcpClient.sendChat(prompt);
+					const winner = result.modelResponses.find((r: any) => r.isWinner) ?? result.modelResponses[0];
+					if (winner) {
+						void vscode.window.showInformationMessage(
+							`✓ Environment cloning plan generated. Check sidebar for Terraform code.`
+						);
+					}
+				}
 			);
 		})
 	);
@@ -174,6 +206,34 @@ export function registerCommands(
 	disposables.push(
 		vscode.commands.registerCommand('genie-ops.showConnectionGraph', () => {
 			ConnectionGraphPanel.createOrShow(extensionUri, oauthManager);
+		})
+	);
+
+	disposables.push(
+		vscode.commands.registerCommand('genie-ops.rollbackLastAction', async () => {
+			const confirm = await vscode.window.showWarningMessage(
+				'Are you sure you want to rollback the last operation? This cannot be undone.',
+				{ modal: true },
+				'Rollback'
+			);
+
+			if (confirm === 'Rollback') {
+				await vscode.window.withProgress(
+					{
+						location: vscode.ProgressLocation.Notification,
+						title: 'Rolling back last operation...',
+						cancellable: false
+					},
+					async () => {
+						const prompt = '[ENV_ROLLBACK] Rollback last operation';
+						const result = await mcpClient.sendChat(prompt);
+						const winner = result.modelResponses.find((r: any) => r.isWinner) ?? result.modelResponses[0];
+						if (winner) {
+							void vscode.window.showInformationMessage('✓ Last operation rolled back');
+						}
+					}
+				);
+			}
 		})
 	);
 
