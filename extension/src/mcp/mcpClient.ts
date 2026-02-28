@@ -61,7 +61,7 @@ export class McpClient implements vscode.Disposable {
 				stdio: ['pipe', 'pipe', 'pipe'],
 				env: {
 					...process.env,
-					VSCODE_DEVOPS_OMNIBUS: '1'
+					VSCODE_GENIE_OPS: '1'
 				}
 			});
 
@@ -112,7 +112,7 @@ export class McpClient implements vscode.Disposable {
 	private runLocalFallback(prompt: string): ChatResult {
 		const start = Date.now();
 		const baseContent =
-			'DevOps Omnibus backend is not yet fully configured. This is a local preview response.';
+			'Genie-ops backend is not yet fully configured. This is a local preview response.';
 
 		const models: ModelResponse[] = [
 			{

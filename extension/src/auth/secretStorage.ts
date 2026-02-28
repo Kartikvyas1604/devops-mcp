@@ -21,7 +21,7 @@ export type SecretKey =
  */
 export class SecretStorageFacade {
 	private readonly storage: vscode.SecretStorage;
-	private readonly prefix = 'devops-omnibus/';
+	private readonly prefix = 'genie-ops/';
 
 	public constructor(storage: vscode.SecretStorage) {
 		this.storage = storage;

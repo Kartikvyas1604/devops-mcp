@@ -7,17 +7,17 @@ import { McpClient, McpStatus } from '../mcp/mcpClient';
  */
 export function createStatusBarItem(mcpClient: McpClient): vscode.StatusBarItem {
 	const item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-	item.text = 'DevOps Omnibus: Initializing…';
-	item.command = 'devops-omnibus.openChat';
+	item.text = 'Genie-ops: Initializing…';
+	item.command = 'genie-ops.openChat';
 
 	const update = (status: McpStatus): void => {
-		const prefix = status.connected ? '$(check) DevOps Omnibus' : '$(warning) DevOps Omnibus';
+		const prefix = status.connected ? '$(check) Genie-ops' : '$(warning) Genie-ops';
 		const suffix =
 			status.activeTasks > 0 ? ` – Running ${status.activeTasks} task(s)…` : status.connected ? '' : ' – Offline';
 		item.text = `${prefix}${suffix}`;
 		item.tooltip = status.connected
-			? 'DevOps Omnibus MCP backend is connected.'
-			: 'DevOps Omnibus MCP backend is not connected. Open the Output panel for details.';
+			? 'Genie-ops MCP backend is connected.'
+			: 'Genie-ops MCP backend is not connected. Open the Output panel for details.';
 	};
 
 	update({ connected: false, activeTasks: 0 });

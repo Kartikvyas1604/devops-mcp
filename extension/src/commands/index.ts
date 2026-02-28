@@ -11,7 +11,7 @@ export interface CommandServices {
 }
 
 /**
- * Registers all DevOps Omnibus commands with VS Code.
+ * Registers all Genie-ops commands with VS Code.
  */
 export function registerCommands(
 	context: vscode.ExtensionContext,
@@ -22,15 +22,15 @@ export function registerCommands(
 	const disposables: vscode.Disposable[] = [];
 
 	disposables.push(
-		vscode.commands.registerCommand('devops-omnibus.openChat', () => {
+		vscode.commands.registerCommand('genie-ops.openChat', () => {
 			revealChat();
 		})
 	);
 
 	disposables.push(
-		vscode.commands.registerCommand('devops-omnibus.runTask', async () => {
+		vscode.commands.registerCommand('genie-ops.runTask', async () => {
 			const prompt = await vscode.window.showInputBox({
-				title: 'DevOps Omnibus – Run DevOps Task',
+				title: 'Genie-ops – Run DevOps Task',
 				placeHolder: 'Describe what you want to do (e.g. "Set up CI/CD for this repo")',
 				ignoreFocusOut: true
 			});
@@ -42,16 +42,15 @@ export function registerCommands(
 			await vscode.window.withProgress(
 				{
 					location: vscode.ProgressLocation.Notification,
-					title: 'DevOps Omnibus – Running task',
+					title: 'Genie-ops – Running task',
 					cancellable: false
 				},
 				async () => {
 					const result = await mcpClient.sendChat(prompt);
-					// For now we just show a short summary; the sidebar displays full details.
 					const winner = result.modelResponses.find((r) => r.isWinner) ?? result.modelResponses[0];
 					if (winner) {
 						void vscode.window.showInformationMessage(
-							`DevOps Omnibus task processed by ${winner.displayName}. Open the sidebar for full details.`
+							`Genie-ops task processed by ${winner.displayName}. Open the sidebar for full details.`
 						);
 					}
 				}
@@ -60,38 +59,38 @@ export function registerCommands(
 	);
 
 	const connectServices = [
-		{ command: 'devops-omnibus.connectService.github', label: 'GitHub' },
-		{ command: 'devops-omnibus.connectService.docker', label: 'Docker' },
-		{ command: 'devops-omnibus.connectService.aws', label: 'AWS' },
-		{ command: 'devops-omnibus.connectService.slack', label: 'Slack' },
-		{ command: 'devops-omnibus.connectService.jira', label: 'Jira' },
-		{ command: 'devops-omnibus.connectService.gcp', label: 'Google Cloud' },
-		{ command: 'devops-omnibus.connectService.azure', label: 'Azure' },
-		{ command: 'devops-omnibus.connectService.kubernetes', label: 'Kubernetes' }
+		{ command: 'genie-ops.connectService.github', label: 'GitHub' },
+		{ command: 'genie-ops.connectService.docker', label: 'Docker' },
+		{ command: 'genie-ops.connectService.aws', label: 'AWS' },
+		{ command: 'genie-ops.connectService.slack', label: 'Slack' },
+		{ command: 'genie-ops.connectService.jira', label: 'Jira' },
+		{ command: 'genie-ops.connectService.gcp', label: 'Google Cloud' },
+		{ command: 'genie-ops.connectService.azure', label: 'Azure' },
+		{ command: 'genie-ops.connectService.kubernetes', label: 'Kubernetes' }
 	] as const;
 
 	for (const { command, label } of connectServices) {
 		disposables.push(
 			vscode.commands.registerCommand(command, async () => {
 				void vscode.window.showInformationMessage(
-					`DevOps Omnibus: ${label} connection flows will appear here.`
+					`Genie-ops: ${label} connection flows will appear here.`
 				);
 			})
 		);
 	}
 
 	disposables.push(
-		vscode.commands.registerCommand('devops-omnibus.cloneEnvironment', async () => {
+		vscode.commands.registerCommand('genie-ops.cloneEnvironment', async () => {
 			void vscode.window.showInformationMessage(
-				'DevOps Omnibus: Environment cloning will appear here once cloud integrations are configured.'
+				'Genie-ops: Environment cloning will appear here once cloud integrations are configured.'
 			);
 		})
 	);
 
 	disposables.push(
-		vscode.commands.registerCommand('devops-omnibus.vibeCode', async () => {
+		vscode.commands.registerCommand('genie-ops.vibeCode', async () => {
 			const prompt = await vscode.window.showInputBox({
-				title: 'DevOps Omnibus – Vibe Code Application',
+				title: 'Genie-ops – Vibe Code Application',
 				placeHolder: 'Describe the app you want to scaffold (stack, features, integrations)…',
 				ignoreFocusOut: true
 			});
@@ -103,13 +102,13 @@ export function registerCommands(
 			await vscode.window.withProgress(
 				{
 					location: vscode.ProgressLocation.Notification,
-					title: 'DevOps Omnibus – Vibe coding in progress',
+					title: 'Genie-ops – Vibe coding in progress',
 					cancellable: false
 				},
 				async () => {
 					await mcpClient.sendChat(`VIBE_CODING_REQUEST:: ${prompt}`);
 					void vscode.window.showInformationMessage(
-						'DevOps Omnibus: Vibe coding plan generated. Open the sidebar for details.'
+						'Genie-ops: Vibe coding plan generated. Open the sidebar for details.'
 					);
 				}
 			);
@@ -117,9 +116,9 @@ export function registerCommands(
 	);
 
 	disposables.push(
-		vscode.commands.registerCommand('devops-omnibus.rollbackLastAction', async () => {
+		vscode.commands.registerCommand('genie-ops.rollbackLastAction', async () => {
 			void vscode.window.showInformationMessage(
-				'DevOps Omnibus: Rollback of the last action will appear here once change tracking is wired.'
+				'Genie-ops: Rollback of the last action will appear here once change tracking is wired.'
 			);
 		})
 	);

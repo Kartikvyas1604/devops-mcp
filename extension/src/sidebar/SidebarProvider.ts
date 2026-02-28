@@ -61,7 +61,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		if (this.view) {
 			this.view.show?.(true);
 		} else {
-			void vscode.commands.executeCommand('devops-omnibus.openChat');
+			void vscode.commands.executeCommand('genie-ops.openChat');
 		}
 	}
 
@@ -79,11 +79,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		try {
 			result = await this.mcpClient.sendChat(enrichedPrompt);
 		} catch (error) {
-			console.error('DevOps Omnibus chat error', error);
+			console.error('Genie-ops chat error', error);
 			this.postMessage({
 				type: 'chat:error',
 				message:
-					'DevOps Omnibus failed to process your request. Open the Output panel for more details and ensure the MCP server is running.'
+					'Genie-ops failed to process your request. Open the Output panel for more details and ensure the MCP server is running.'
 			});
 			return;
 		}
@@ -105,7 +105,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		const key = this.modelIdToSecretKey(modelId);
 		if (!key) {
 			void vscode.window.showWarningMessage(
-				`DevOps Omnibus: Unknown model identifier "${modelId}" – cannot store API key.`
+				`Genie-ops: Unknown model identifier "${modelId}" – cannot store API key.`
 			);
 			return;
 		}
@@ -113,14 +113,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		if (!value) {
 			await this.secretStorage.deleteSecret(key);
 			void vscode.window.showInformationMessage(
-				`DevOps Omnibus: Cleared credentials for model "${modelId}".`
+				`Genie-ops: Cleared credentials for model "${modelId}".`
 			);
 			return;
 		}
 
 		await this.secretStorage.storeSecret(key, value);
 		void vscode.window.showInformationMessage(
-			`DevOps Omnibus: Updated credentials for model "${modelId}".`
+			`Genie-ops: Updated credentials for model "${modelId}".`
 		);
 	}
 
@@ -175,7 +175,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 			cspSource
 		} 'unsafe-inline'; script-src 'nonce-${nonce}';">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>DevOps Omnibus</title>
+	<title>Genie-ops Control Center</title>
 	<style>
 		body {
 			margin: 0;
@@ -325,7 +325,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 <body>
 	<div class="app">
 		<header class="header">
-			<div class="header-title">DevOps Omnibus</div>
+			<div class="header-title">🧞 Genie-ops</div>
 			<div class="header-badge" id="status-badge">Idle</div>
 		</header>
 		<main class="main">
@@ -333,7 +333,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 		</main>
 		<footer class="footer">
 			<div class="input-row">
-				<textarea id="prompt" placeholder="Describe the DevOps or integration task you want to run…"></textarea>
+				<textarea id="prompt" placeholder="Ask Genie to run any DevOps task… 🚀"></textarea>
 				<button id="send">Run</button>
 			</div>
 			<div class="meta-row">

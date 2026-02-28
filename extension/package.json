@@ -1,153 +1,173 @@
 {
-  "name": "devops-omnibus",
-  "displayName": "DevOps Omnibus",
-  "description": "DevOps Omnibus is a production-grade automation copilot that connects your codebase to cloud, CI/CD, and SaaS tools via natural language.",
-  "version": "0.0.1",
-  "publisher": "your-publisher-id",
+  "name": "genie-ops",
+  "displayName": "Genie-ops",
+  "description": "Genie-ops is the world's most powerful DevOps automation platform. Execute any cloud, CI/CD, or integration task via natural language with multi-AI orchestration.",
+  "version": "1.0.0",
+  "publisher": "0xkartikvyas",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
     "Other",
-    "SCM",
-    "Continuous Integration"
+    "SCM Providers",
+    "Machine Learning",
+    "Azure",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "devops",
+    "ai",
+    "automation",
+    "cloud",
+    "aws",
+    "gcp",
+    "azure",
+    "kubernetes",
+    "docker",
+    "ci-cd"
   ],
   "activationEvents": [
-    "onStartupFinished",
-    "onView:devops-omnibus.chatView",
-    "onCommand:devops-omnibus.openChat",
-    "onCommand:devops-omnibus.runTask",
-    "onCommand:devops-omnibus.connectService.github",
-    "onCommand:devops-omnibus.connectService.docker",
-    "onCommand:devops-omnibus.connectService.aws",
-    "onCommand:devops-omnibus.connectService.slack",
-    "onCommand:devops-omnibus.connectService.jira",
-    "onCommand:devops-omnibus.connectService.gcp",
-    "onCommand:devops-omnibus.connectService.azure",
-    "onCommand:devops-omnibus.connectService.kubernetes",
-    "onCommand:devops-omnibus.cloneEnvironment",
-    "onCommand:devops-omnibus.vibeCode",
-    "onCommand:devops-omnibus.rollbackLastAction"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "devops-omnibus",
-          "title": "DevOps Omnibus",
+          "id": "genie-ops",
+          "title": "Genie-ops",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "devops-omnibus": [
+      "genie-ops": [
         {
           "type": "webview",
-          "id": "devops-omnibus.chatView",
-          "name": "DevOps Omnibus"
+          "id": "genie-ops.chatView",
+          "name": "Genie-ops Control Center"
         }
       ]
     },
     "commands": [
       {
-        "command": "devops-omnibus.openChat",
-        "title": "DevOps Omnibus: Open Chat",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.openChat",
+        "title": "Genie-ops: Open Control Center",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.runTask",
-        "title": "DevOps Omnibus: Run DevOps Task",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.runTask",
+        "title": "Genie-ops: Run DevOps Task",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.github",
-        "title": "DevOps Omnibus: Connect GitHub",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.github",
+        "title": "Genie-ops: Connect GitHub",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.docker",
-        "title": "DevOps Omnibus: Connect Docker",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.docker",
+        "title": "Genie-ops: Connect Docker",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.aws",
-        "title": "DevOps Omnibus: Connect AWS",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.aws",
+        "title": "Genie-ops: Connect AWS",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.slack",
-        "title": "DevOps Omnibus: Connect Slack",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.slack",
+        "title": "Genie-ops: Connect Slack",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.jira",
-        "title": "DevOps Omnibus: Connect Jira",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.jira",
+        "title": "Genie-ops: Connect Jira",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.gcp",
-        "title": "DevOps Omnibus: Connect Google Cloud",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.gcp",
+        "title": "Genie-ops: Connect Google Cloud",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.azure",
-        "title": "DevOps Omnibus: Connect Azure",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.azure",
+        "title": "Genie-ops: Connect Azure",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.connectService.kubernetes",
-        "title": "DevOps Omnibus: Connect Kubernetes",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.connectService.kubernetes",
+        "title": "Genie-ops: Connect Kubernetes",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.cloneEnvironment",
-        "title": "DevOps Omnibus: Clone Environment",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.cloneEnvironment",
+        "title": "Genie-ops: Clone Environment",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.vibeCode",
-        "title": "DevOps Omnibus: Vibe Code Application",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.vibeCode",
+        "title": "Genie-ops: Vibe Code Application",
+        "category": "Genie-ops"
       },
       {
-        "command": "devops-omnibus.rollbackLastAction",
-        "title": "DevOps Omnibus: Rollback Last Action",
-        "category": "DevOps Omnibus"
+        "command": "genie-ops.rollbackLastAction",
+        "title": "Genie-ops: Rollback Last Action",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.showConnectionGraph",
+        "title": "Genie-ops: Show Connection Graph",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.syncSecrets",
+        "title": "Genie-ops: Sync Secrets to Vault",
+        "category": "Genie-ops"
       }
     ],
     "configuration": {
-      "title": "DevOps Omnibus",
+      "title": "Genie-ops",
       "properties": {
-        "devopsOmnibus.telemetry.enabled": {
+        "genieOps.telemetry.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable anonymous usage telemetry for DevOps Omnibus. Disabled by default for privacy."
+          "description": "Enable anonymous usage telemetry for Genie-ops. Disabled by default for privacy."
         },
-        "devopsOmnibus.models.claude.enabled": {
+        "genieOps.models.claude.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable Claude 3.5 Sonnet via Anthropic SDK as the primary model."
         },
-        "devopsOmnibus.models.openai.enabled": {
+        "genieOps.models.openai.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable OpenAI GPT-4o as a secondary model."
         },
-        "devopsOmnibus.models.gemini.enabled": {
+        "genieOps.models.gemini.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable Gemini Pro for Google Cloud specific tasks."
         },
-        "devopsOmnibus.models.mistral.enabled": {
+        "genieOps.models.mistral.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable Mistral for fast local-style completions."
         },
-        "devopsOmnibus.models.perplexity.enabled": {
+        "genieOps.models.perplexity.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable Perplexity API for trending tech radar lookups."
+        },
+        "genieOps.autoContext.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically analyze project context and pre-load it for AI models."
+        },
+        "genieOps.parallelExecution.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run multiple AI models in parallel for complex tasks (model race mode)."
         }
       }
     }
@@ -159,6 +179,14 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "openai": "^4.47.0",
+    "@google/generative-ai": "^0.2.1",
+    "@mistralai/mistralai": "^0.4.0",
+    "axios": "^1.6.7",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "20.x",

@@ -7,7 +7,7 @@ import { McpClient } from './mcp/mcpClient';
 import { initializeProjectContext } from './context/analyzer';
 
 /**
- * Activates the DevOps Omnibus extension.
+ * Activates the Genie-ops extension.
  *
  * This is the main entry point that wires together:
  * - Secret storage
@@ -15,6 +15,8 @@ import { initializeProjectContext } from './context/analyzer';
  * - Sidebar webview
  * - Commands
  * - Status bar indicators
+ * - AI orchestration
+ * - Project context analysis
  */
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
 	const secretStorage = new SecretStorageFacade(context.secrets);
@@ -28,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	await mcpClient.start().catch((error: unknown) => {
 		console.error('Failed to start MCP client', error);
 		void vscode.window.showErrorMessage(
-			'DevOps Omnibus: Failed to start MCP backend. Open the Output panel for details.'
+			'Genie-ops: Failed to start MCP backend. Open the Output panel for details.'
 		);
 	});
 
@@ -42,7 +44,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 	);
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider('devops-omnibus.chatView', sidebarProvider)
+		vscode.window.registerWebviewViewProvider('genie-ops.chatView', sidebarProvider)
 	);
 
 	registerCommands(context, {
