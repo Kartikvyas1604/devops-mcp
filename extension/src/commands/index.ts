@@ -3,6 +3,7 @@ import { McpClient } from '../mcp/mcpClient';
 import { SecretStorageFacade } from '../auth/secretStorage';
 import { OAuthManager } from '../auth/oauth';
 import { ProjectContextService } from '../context/analyzer';
+import { ConnectionGraphPanel } from '../sidebar/ConnectionGraphPanel';
 
 export interface CommandServices {
 	mcpClient: McpClient;
@@ -10,6 +11,7 @@ export interface CommandServices {
 	oauthManager: OAuthManager;
 	projectContext: ProjectContextService;
 	revealChat: () => void;
+	extensionUri: vscode.Uri;
 }
 
 /**
@@ -19,7 +21,7 @@ export function registerCommands(
 	context: vscode.ExtensionContext,
 	services: CommandServices
 ): void {
-	const { mcpClient, oauthManager, revealChat } = services;
+	const { mcpClient, oauthManager, extensionUri, revealChat } = services;
 
 	const disposables: vscode.Disposable[] = [];
 
@@ -166,6 +168,12 @@ export function registerCommands(
 			if (selected) {
 				await oauthManager.disconnect(selected);
 			}
+		})
+	);
+
+	disposables.push(
+		vscode.commands.registerCommand('genie-ops.showConnectionGraph', () => {
+			ConnectionGraphPanel.createOrShow(extensionUri, oauthManager);
 		})
 	);
 

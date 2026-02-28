@@ -54,6 +54,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		oauthManager,
 		secretStorage,
 		projectContext: projectContextService,
+		extensionUri: context.extensionUri,
 		revealChat: () => sidebarProvider.reveal()
 	});
 
