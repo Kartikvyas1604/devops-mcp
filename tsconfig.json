@@ -1,20 +1,14 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "ES2020",
-    "outDir": "out",
-    "lib": [
-      "ES2020"
-    ],
-    "sourceMap": true,
-    "rootDir": "src",
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "rootDir": ".",
+    "outDir": "out"
   },
   "exclude": [
     "node_modules",
-    ".vscode-test"
+    ".vscode-test",
+    "extension/out",
+    "mcp-server/dist"
   ]
 }
+

@@ -1,53 +1,20 @@
 {
-  "name": "devops-mcp-extension",
-  "displayName": "DevOps MCP Extension",
-  "description": "A VS Code extension for DevOps automation",
+  "name": "devops-omnibus-monorepo",
+  "private": true,
   "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.85.0"
-  },
-  "categories": [
-    "Other"
+  "description": "Monorepo containing the DevOps Omnibus VS Code extension and MCP server.",
+  "workspaces": [
+    "extension",
+    "mcp-server",
+    "shared"
   ],
-  "activationEvents": [
-    "onView:devops-mcp.mainView"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "devops-mcp-sidebar",
-          "title": "DevOps MCP",
-          "icon": "resources/icon.svg"
-        }
-      ]
-    },
-    "views": {
-      "devops-mcp-sidebar": [
-        {
-          "type": "webview",
-          "id": "devops-mcp.mainView",
-          "name": "Input Panel"
-        }
-      ]
-    }
-  },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.85.0",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^6.13.0",
-    "@typescript-eslint/parser": "^6.13.0",
-    "eslint": "^8.54.0",
-    "typescript": "^5.3.0",
-    "@vscode/test-electron": "^2.3.8"
+    "build": "npm run compile -w extension && npm run build -w mcp-server",
+    "compile": "npm run compile -w extension",
+    "lint": "npm run lint -w extension && npm run lint -w mcp-server",
+    "test": "npm test -w extension && npm test -w mcp-server",
+    "watch": "npm run watch -w extension",
+    "package:extension": "cd extension && npx vsce package"
   }
 }
+

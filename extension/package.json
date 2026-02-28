@@ -1,0 +1,173 @@
+{
+  "name": "devops-omnibus",
+  "displayName": "DevOps Omnibus",
+  "description": "DevOps Omnibus is a production-grade automation copilot that connects your codebase to cloud, CI/CD, and SaaS tools via natural language.",
+  "version": "0.0.1",
+  "publisher": "your-publisher-id",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "SCM",
+    "Continuous Integration"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:devops-omnibus.chatView",
+    "onCommand:devops-omnibus.openChat",
+    "onCommand:devops-omnibus.runTask",
+    "onCommand:devops-omnibus.connectService.github",
+    "onCommand:devops-omnibus.connectService.docker",
+    "onCommand:devops-omnibus.connectService.aws",
+    "onCommand:devops-omnibus.connectService.slack",
+    "onCommand:devops-omnibus.connectService.jira",
+    "onCommand:devops-omnibus.connectService.gcp",
+    "onCommand:devops-omnibus.connectService.azure",
+    "onCommand:devops-omnibus.connectService.kubernetes",
+    "onCommand:devops-omnibus.cloneEnvironment",
+    "onCommand:devops-omnibus.vibeCode",
+    "onCommand:devops-omnibus.rollbackLastAction"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devops-omnibus",
+          "title": "DevOps Omnibus",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "devops-omnibus": [
+        {
+          "type": "webview",
+          "id": "devops-omnibus.chatView",
+          "name": "DevOps Omnibus"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "devops-omnibus.openChat",
+        "title": "DevOps Omnibus: Open Chat",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.runTask",
+        "title": "DevOps Omnibus: Run DevOps Task",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.github",
+        "title": "DevOps Omnibus: Connect GitHub",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.docker",
+        "title": "DevOps Omnibus: Connect Docker",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.aws",
+        "title": "DevOps Omnibus: Connect AWS",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.slack",
+        "title": "DevOps Omnibus: Connect Slack",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.jira",
+        "title": "DevOps Omnibus: Connect Jira",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.gcp",
+        "title": "DevOps Omnibus: Connect Google Cloud",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.azure",
+        "title": "DevOps Omnibus: Connect Azure",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.connectService.kubernetes",
+        "title": "DevOps Omnibus: Connect Kubernetes",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.cloneEnvironment",
+        "title": "DevOps Omnibus: Clone Environment",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.vibeCode",
+        "title": "DevOps Omnibus: Vibe Code Application",
+        "category": "DevOps Omnibus"
+      },
+      {
+        "command": "devops-omnibus.rollbackLastAction",
+        "title": "DevOps Omnibus: Rollback Last Action",
+        "category": "DevOps Omnibus"
+      }
+    ],
+    "configuration": {
+      "title": "DevOps Omnibus",
+      "properties": {
+        "devopsOmnibus.telemetry.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous usage telemetry for DevOps Omnibus. Disabled by default for privacy."
+        },
+        "devopsOmnibus.models.claude.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Claude 3.5 Sonnet via Anthropic SDK as the primary model."
+        },
+        "devopsOmnibus.models.openai.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable OpenAI GPT-4o as a secondary model."
+        },
+        "devopsOmnibus.models.gemini.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Gemini Pro for Google Cloud specific tasks."
+        },
+        "devopsOmnibus.models.mistral.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Mistral for fast local-style completions."
+        },
+        "devopsOmnibus.models.perplexity.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Perplexity API for trending tech radar lookups."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./tsconfig.json",
+    "watch": "tsc -watch -p ./tsconfig.json",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "20.x",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.0"
+  }
+}
+
