@@ -8,7 +8,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { MistralClient } from '@mistralai/mistralai';
+import MistralClient from '@mistralai/mistralai';
 import axios from 'axios';
 import { SecretManager } from '../secrets/secretManager.js';
 
@@ -60,7 +60,7 @@ export class AIOrchestrator {
 
     const mistralKey = await this.secretManager.getSecret('models.mistral.apiKey');
     if (mistralKey) {
-      this.mistral = new MistralClient({ apiKey: mistralKey });
+      this.mistral = new MistralClient(mistralKey);
     }
   }
 

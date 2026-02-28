@@ -17,7 +17,7 @@ export interface VibeRequest {
 export interface VibeResult {
   projectName: string;
   architecture: string;
-  tech Stack: string[];
+  techStack: string[];
   fileStructure: Record<string, string>;
   setupInstructions: string[];
   estimatedTime: string;

@@ -13,7 +13,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  Tool
+  Tool,
+  CallToolRequest
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { AIOrchestrator } from './orchestrator/aiOrchestrator.js';
@@ -98,7 +99,7 @@ class GenieOpsMCPServer {
     });
 
     // Handle tool execution
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest) => {
       const toolName = request.params.name;
       const toolData = this.tools.get(toolName);
 

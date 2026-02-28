@@ -9,7 +9,8 @@
  * - Resource management commands
  */
 
-import { Tool, CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import { Tool } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { SecretManager } from '../secrets/secretManager.js';
 
 export class KubernetesTool {
@@ -81,7 +82,7 @@ export class KubernetesTool {
     ];
   }
 
-  async executeTool(toolName: string, input: Record<string, any>): Promise<CallToolResultSchema> {
+  async executeTool(toolName: string, input: Record<string, any>): Promise<CallToolResult> {
     try {
       switch (toolName) {
         case 'k8s_generate_deployment':
@@ -115,7 +116,7 @@ export class KubernetesTool {
     }
   }
 
-  private async generateDeployment(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async generateDeployment(input: Record<string, any>): Promise<CallToolResult> {
     const envVarsYaml = input.envVars
       ? Object.entries(input.envVars)
           .map(([key, value]) => `        - name: ${key}\n          value: "${value}"`)
@@ -187,7 +188,7 @@ spec:
     };
   }
 
-  private async generateIngress(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async generateIngress(input: Record<string, any>): Promise<CallToolResult> {
     const tlsSection = input.tls
       ? `  tls:
   - hosts:
@@ -235,7 +236,7 @@ ${tlsSection}
     };
   }
 
-  private async generateHelmChart(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async generateHelmChart(input: Record<string, any>): Promise<CallToolResult> {
     const chartYaml = `apiVersion: v2
 name: ${input.chartName}
 description: A Helm chart for ${input.chartName}
@@ -343,7 +344,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
     };
   }
 
-  private async getPodLogs(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async getPodLogs(input: Record<string, any>): Promise<CallToolResult> {
     // In production, would use kubectl client or k8s API
     const simulatedLogs = `[Simulated logs for ${input.podName}]
 2025-01-15 10:00:01 INFO Starting application

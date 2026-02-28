@@ -8,7 +8,8 @@
  * - Automated ticket creation from TODO comments
  */
 
-import { Tool, CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import { Tool } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { SecretManager } from '../secrets/secretManager.js';
 import axios from 'axios';
 
@@ -78,7 +79,7 @@ export class JiraTool {
     ];
   }
 
-  async executeTool(toolName: string, input: Record<string, any>): Promise<CallToolResultSchema> {
+  async executeTool(toolName: string, input: Record<string, any>): Promise<CallToolResult> {
     const credentials = await this.secretManager.getSecret('jira.token');
     if (!credentials) {
       return {
@@ -133,10 +134,19 @@ export class JiraTool {
     baseUrl: string,
     authHeader: string,
     input: Record<string, any>
-  ): Promise<CallToolResultSchema> {
-    const payload = {
+  ): Promise<CallToolResult> {
+    const payload: {
       fields: {
-        project: { key: input.project },
+        project: { key: any };
+        summary: any;
+        description: any;
+        issuetype: { name: any };
+        priority: { name: any };
+        assignee?: { name: string };
+      };
+    } = {
+      fields: {
+        project: { key: input.project || input.projectKey },
         summary: input.summary,
         description: {
           type: 'doc',
@@ -154,7 +164,7 @@ export class JiraTool {
     };
 
     if (input.assignee) {
-      payload.fields['assignee'] = { name: input.assignee };
+      payload.fields.assignee = { name: input.assignee };
     }
 
     const response = await axios.post(`${baseUrl}/issue`, payload, {
@@ -181,7 +191,7 @@ export class JiraTool {
     baseUrl: string,
     authHeader: string,
     input: Record<string, any>
-  ): Promise<CallToolResultSchema> {
+  ): Promise<CallToolResult> {
     // Create epic
     const epicPayload = {
       fields: {
@@ -260,7 +270,7 @@ export class JiraTool {
     baseUrl: string,
     authHeader: string,
     input: Record<string, any>
-  ): Promise<CallToolResultSchema> {
+  ): Promise<CallToolResult> {
     // Get available transitions
     const transitionsResponse = await axios.get(
       `${baseUrl}/issue/${input.issueKey}/transitions`,
@@ -314,7 +324,7 @@ export class JiraTool {
     baseUrl: string,
     authHeader: string,
     input: Record<string, any>
-  ): Promise<CallToolResultSchema> {
+  ): Promise<CallToolResult> {
     const payload = {
       body: {
         type: 'doc',

@@ -8,7 +8,8 @@
  * - Rollback last action with automatic cleanup
  */
 
-import { Tool, CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import { Tool } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { SecretManager } from '../secrets/secretManager.js';
 
 interface OperationRecord {
@@ -80,7 +81,7 @@ export class EnvManagementTool {
     ];
   }
 
-  async executeTool(toolName: string, input: Record<string, any>): Promise<CallToolResultSchema> {
+  async executeTool(toolName: string, input: Record<string, any>): Promise<CallToolResult> {
     try {
       switch (toolName) {
         case 'env_clone':
@@ -114,7 +115,7 @@ export class EnvManagementTool {
     }
   }
 
-  private async cloneEnvironment(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async cloneEnvironment(input: Record<string, any>): Promise<CallToolResult> {
     const { sourceEnv, targetEnv, cloud, includeData } = input;
 
     // Simulate cloning (in production, would scan cloud resources and duplicate)
@@ -269,7 +270,7 @@ output "db_endpoint" {
     return `# ${cloud.toUpperCase()} Terraform configuration for ${envName}\n# Implementation pending`;
   }
 
-  private async generateIaC(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async generateIaC(input: Record<string, any>): Promise<CallToolResult> {
     const { format, includeSecrets } = input;
 
     const iacCode = format === 'terraform' ? this.generateTerraform() : this.generatePulumi();
@@ -341,7 +342,7 @@ export const bucketName = assets.bucket;
 `;
   }
 
-  private async rollback(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async rollback(input: Record<string, any>): Promise<CallToolResult> {
     const { steps, force } = input;
 
     if (this.operationHistory.length === 0) {
@@ -401,7 +402,7 @@ export const bucketName = assets.bucket;
     };
   }
 
-  private async getHistory(input: Record<string, any>): Promise<CallToolResultSchema> {
+  private async getHistory(input: Record<string, any>): Promise<CallToolResult> {
     const { limit } = input;
     const recent = this.operationHistory.slice(-limit);
 

@@ -9,7 +9,7 @@
  * - Cost estimation
  */
 
-import { S3Client, CreateBucketCommand, ListBucketsCommand } from '@aws-sdk/client-s3';
+import { S3Client, CreateBucketCommand, ListBucketsCommand, Bucket } from '@aws-sdk/client-s3';
 import { EC2Client, RunInstancesCommand, DescribeInstancesCommand } from '@aws-sdk/client-ec2';
 import { LambdaClient, CreateFunctionCommand } from '@aws-sdk/client-lambda';
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
@@ -139,7 +139,7 @@ export class AWSTool {
 
     return {
       success: true,
-      buckets: response.Buckets?.map(b => ({
+      buckets: response.Buckets?.map((b: Bucket) => ({
         name: b.Name,
         createdAt: b.CreationDate,
       })) || [],

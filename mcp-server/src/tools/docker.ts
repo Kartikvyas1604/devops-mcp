@@ -215,7 +215,7 @@ volumes:
     );
 
     return new Promise((resolve, reject) => {
-      this.docker.modem.followProgress(stream, (err, res) => {
+      this.docker.modem.followProgress(stream, (err: Error | null, res: any) => {
         if (err) {
           reject(err);
         } else {
@@ -235,12 +235,12 @@ volumes:
     return {
       success: true,
       count: containers.length,
-      containers: containers.map(c => ({
+      containers: containers.map((c: Docker.ContainerInfo) => ({
         id: c.Id.substring(0, 12),
         name: c.Names[0],
         image: c.Image,
         status: c.Status,
-        ports: c.Ports.map(p => p.PublicPort ? `${p.PublicPort}:${p.PrivatePort}` : p.PrivatePort),
+        ports: c.Ports.map((p: Docker.Port) => p.PublicPort ? `${p.PublicPort}:${p.PrivatePort}` : p.PrivatePort),
       })),
     };
   }
