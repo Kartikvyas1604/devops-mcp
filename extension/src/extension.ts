@@ -20,8 +20,8 @@ import { initializeProjectContext } from './context/analyzer';
  * - Project context analysis
  */
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-	const oauthManager = new OAuthManager(secretStorage);
 	const secretStorage = new SecretStorageFacade(context.secrets);
+	const oauthManager = new OAuthManager(secretStorage);
 
 	const mcpClient = new McpClient({
 		extensionContext: context,
