@@ -1,27 +1,29 @@
-import { AzureClient } from './azureClient';
+/**
+ * Azure Services - High-level Azure operations wrapper
+ */
+
+import { AzureClient, AzureResource, AzureResourceGroup } from './azureClient';
 
 export class AzureServices {
     private client: AzureClient;
 
-    constructor() {
-        this.client = new AzureClient();
+    constructor(subscriptionId?: string) {
+        this.client = new AzureClient(subscriptionId || process.env.AZURE_SUBSCRIPTION_ID || '');
     }
 
-    public async createResourceGroup(name: string, location: string) {
+    public async createResourceGroup(name: string, location: string): Promise<AzureResourceGroup | null> {
         return this.client.createResourceGroup(name, location);
     }
 
-    public async deployTemplate(resourceGroupName: string, template: object) {
-        return this.client.deployTemplate(resourceGroupName, template);
+    public async listResources(): Promise<AzureResource[]> {
+        return this.client.listResources();
     }
 
-    public async listResources(resourceGroupName: string) {
-        return this.client.listResources(resourceGroupName);
+    public async getResourceGroup(resourceGroupName: string): Promise<AzureResourceGroup | null> {
+        return this.client.getResourceGroup(resourceGroupName);
     }
 
-    public async deleteResource(resourceGroupName: string, resourceName: string) {
-        return this.client.deleteResource(resourceGroupName, resourceName);
+    public async deleteResourceGroup(resourceGroupName: string): Promise<void> {
+        return this.client.deleteResourceGroup(resourceGroupName);
     }
-
-    // Additional Azure service-related functions can be added here
 }

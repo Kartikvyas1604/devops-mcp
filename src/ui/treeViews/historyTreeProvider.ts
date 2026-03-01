@@ -22,26 +22,29 @@ export class HistoryTreeProvider implements vscode.TreeDataProvider<HistoryItem>
         return Promise.resolve(this.historyItems);
     }
 
-    addHistoryItem(command: string) {
-        const newItem = new HistoryItem(command);
+    addHistoryItem(commandText: string): void {
+        const newItem = new HistoryItem(commandText);
         this.historyItems.push(newItem);
-        this._onDidChangeTreeData.fire();
+        this._onDidChangeTreeData.fire(undefined);
         this.saveHistory();
     }
 
-    private loadHistory() {
+    private loadHistory(): void {
         // Logic to load history from persistent storage
     }
 
-    private saveHistory() {
+    private saveHistory(): void {
         // Logic to save history to persistent storage
     }
 }
 
 class HistoryItem extends vscode.TreeItem {
-    constructor(public command: string) {
-        super(command, vscode.TreeItemCollapsibleState.None);
-        this.tooltip = command;
-        this.description = command;
+    public readonly commandText: string;
+
+    constructor(commandText: string) {
+        super(commandText, vscode.TreeItemCollapsibleState.None);
+        this.commandText = commandText;
+        this.tooltip = commandText;
+        this.description = commandText;
     }
 }

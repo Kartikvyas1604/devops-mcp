@@ -1,23 +1,25 @@
-import { GCPClient } from './gcpClient';
+/**
+ * GCP Services - High-level GCP operations wrapper
+ */
 
-export const createGCPProject = async (projectName: string) => {
+import { GCPClient, GCPInstance, GCPBucket } from './gcpClient';
+
+export const getGCPProjectId = async (): Promise<string> => {
     const client = new GCPClient();
-    return await client.createProject(projectName);
+    return await client.getProjectId();
 };
 
-export const deployGCPFunction = async (functionName: string, sourceCode: string) => {
+export const listGCPInstances = async (zone: string): Promise<GCPInstance[]> => {
     const client = new GCPClient();
-    return await client.deployFunction(functionName, sourceCode);
+    return await client.listInstances(zone);
 };
 
-export const listGCPProjects = async () => {
+export const listGCPBuckets = async (): Promise<GCPBucket[]> => {
     const client = new GCPClient();
-    return await client.listProjects();
+    return await client.listBuckets();
 };
 
-export const deleteGCPProject = async (projectId: string) => {
+export const createGCPBucket = async (bucketName: string): Promise<void> => {
     const client = new GCPClient();
-    return await client.deleteProject(projectId);
+    return await client.createBucket(bucketName);
 };
-
-// Additional GCP service-related functions can be added here as needed.

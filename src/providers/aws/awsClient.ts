@@ -21,6 +21,9 @@ export interface LambdaInvocationResponse {
     Payload?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AWSModule = any;
+
 class AwsClient {
     private ec2: unknown;
     private s3: unknown;
@@ -34,7 +37,7 @@ class AwsClient {
     private async initializeClients(): Promise<void> {
         try {
             // Dynamically import AWS SDK if available
-            const AWS = await import('aws-sdk').catch(() => null);
+            const AWS: AWSModule = await import('aws-sdk').catch(() => null);
             if (AWS) {
                 this.ec2 = new AWS.default.EC2();
                 this.s3 = new AWS.default.S3();
@@ -54,7 +57,7 @@ class AwsClient {
         }
         const ec2 = this.ec2 as { describeInstances: () => { promise: () => Promise<{ Reservations?: Array<{ Instances?: EC2Instance[] }> }> } };
         const result = await ec2.describeInstances().promise();
-        return result.Reservations?.flatMap((reservation: { Instances?: EC2Instance[] }) => reservation.Instances ?? []) ?? [];
+        return result.Reservations?.flatMap((r: { Instances?: EC2Instance[] }) => r.Instances ?? []) ?? [];
     }
 
     public async startInstance(instanceId: string): Promise<unknown> {

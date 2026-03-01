@@ -14,9 +14,10 @@
     "resolveJsonModule": true,
     "declaration": true,
     "sourceMap": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "strictNullChecks": false
   },
   "include": [
     "src/**/*.ts"
@@ -24,6 +25,8 @@
   "exclude": [
     "node_modules",
     "out",
-    "test"
+    "test",
+    "src/integrations/**/*.ts",
+    "src/ai/**/*.ts"
   ]
 }

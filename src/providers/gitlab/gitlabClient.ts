@@ -1,4 +1,21 @@
-import axios from 'axios';
+/**
+ * GitLab Client - Wrapper for GitLab API operations
+ * Uses native fetch API
+ */
+
+export interface GitLabProject {
+    id?: number;
+    name?: string;
+    path?: string;
+    visibility?: string;
+}
+
+export interface GitLabMergeRequest {
+    id?: number;
+    iid?: number;
+    title?: string;
+    state?: string;
+}
 
 export class GitLabClient {
     private baseUrl: string;
@@ -9,48 +26,51 @@ export class GitLabClient {
         this.token = token;
     }
 
-    private async request(method: string, endpoint: string, data?: any) {
+    private async request<T = unknown>(method: string, endpoint: string, data?: Record<string, unknown>): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
-        const headers = {
+        const headers: Record<string, string> = {
             'Private-Token': this.token,
             'Content-Type': 'application/json',
         };
 
-        const response = await axios({
+        const response = await fetch(url, {
             method,
-            url,
             headers,
-            data,
+            body: data ? JSON.stringify(data) : undefined,
         });
 
-        return response.data;
+        if (!response.ok) {
+            throw new Error(`GitLab API error: ${response.status} ${response.statusText}`);
+        }
+
+        return response.json() as Promise<T>;
     }
 
-    public async getProjects() {
-        return this.request('GET', '/api/v4/projects');
+    public async getProjects(): Promise<GitLabProject[]> {
+        return this.request<GitLabProject[]>('GET', '/api/v4/projects');
     }
 
-    public async createProject(projectData: any) {
-        return this.request('POST', '/api/v4/projects', projectData);
+    public async createProject(projectData: Record<string, unknown>): Promise<GitLabProject> {
+        return this.request<GitLabProject>('POST', '/api/v4/projects', projectData);
     }
 
-    public async getProject(projectId: number) {
-        return this.request('GET', `/api/v4/projects/${projectId}`);
+    public async getProject(projectId: number): Promise<GitLabProject> {
+        return this.request<GitLabProject>('GET', `/api/v4/projects/${projectId}`);
     }
 
-    public async updateProject(projectId: number, projectData: any) {
-        return this.request('PUT', `/api/v4/projects/${projectId}`, projectData);
+    public async updateProject(projectId: number, projectData: Record<string, unknown>): Promise<GitLabProject> {
+        return this.request<GitLabProject>('PUT', `/api/v4/projects/${projectId}`, projectData);
     }
 
-    public async deleteProject(projectId: number) {
-        return this.request('DELETE', `/api/v4/projects/${projectId}`);
+    public async deleteProject(projectId: number): Promise<void> {
+        await this.request('DELETE', `/api/v4/projects/${projectId}`);
     }
 
-    public async getMergeRequests(projectId: number) {
-        return this.request('GET', `/api/v4/projects/${projectId}/merge_requests`);
+    public async getMergeRequests(projectId: number): Promise<GitLabMergeRequest[]> {
+        return this.request<GitLabMergeRequest[]>('GET', `/api/v4/projects/${projectId}/merge_requests`);
     }
 
-    public async createMergeRequest(projectId: number, mergeRequestData: any) {
-        return this.request('POST', `/api/v4/projects/${projectId}/merge_requests`, mergeRequestData);
+    public async createMergeRequest(projectId: number, mergeRequestData: Record<string, unknown>): Promise<GitLabMergeRequest> {
+        return this.request<GitLabMergeRequest>('POST', `/api/v4/projects/${projectId}/merge_requests`, mergeRequestData);
     }
 }

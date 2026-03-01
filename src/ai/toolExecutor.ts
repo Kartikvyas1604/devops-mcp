@@ -366,8 +366,8 @@ export class ToolExecutor {
         results.push({
           toolCallId: toolCall.id,
           name: toolCall.name,
-          success: true,
-          result
+          success: result.success,
+          result: JSON.stringify(result.data ?? result)
         });
 
         this.logger.debug(`Tool ${toolCall.name} completed successfully`);
@@ -391,7 +391,8 @@ export class ToolExecutor {
 
   async executeSingleTool(name: string, input: Record<string, unknown>): Promise<string> {
     this.logger.info(`Executing single tool: ${name}`, input);
-    return this.mcpClient.executeTool(name, input);
+    const result = await this.mcpClient.executeTool(name, input);
+    return JSON.stringify(result.data ?? result);
   }
 
   getToolDefinitions(): AITool[] {

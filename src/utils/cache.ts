@@ -474,7 +474,7 @@ export class RequestDeduplicator<T = unknown> {
  */
 export class TTLMap<K, V> {
     private map: Map<K, { value: V; expiresAt: number }> = new Map();
-    private cleanupInterval: NodeJS.Timer | null = null;
+    private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
     constructor(private defaultTTL: number = 60000) {
         this.startCleanup();

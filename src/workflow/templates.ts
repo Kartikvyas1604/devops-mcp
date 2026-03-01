@@ -28,7 +28,7 @@ export function createCICDWorkflow(options: {
   // Build step
   builder.task('build', 'Build Application', 'docker.build', {
     context: '.',
-    tag: `${{env.PROJECT_NAME}}:${{env.GIT_SHA}}`,
+    tag: `\${{env.PROJECT_NAME}}:\${{env.GIT_SHA}}`,
     dockerfile: 'Dockerfile',
   });
 
@@ -41,15 +41,15 @@ export function createCICDWorkflow(options: {
 
   // Security scan
   builder.task('security-scan', 'Security Scan', 'shell.exec', {
-    command: 'trivy image ${{outputs.build.tag}}',
+    command: 'trivy image \${{outputs.build.tag}}',
   });
   builder.dependsOn('security-scan', ['build']);
   builder.continueOnError('security-scan');
 
   // Push to registry
   builder.task('push', 'Push to Registry', 'docker.push', {
-    image: `${{outputs.build.tag}}`,
-    registry: '${{env.REGISTRY}}',
+    image: `\${{outputs.build.tag}}`,
+    registry: '\${{env.REGISTRY}}',
   });
   builder.dependsOn('push', ['test', 'security-scan']);
 
@@ -65,14 +65,14 @@ export function createCICDWorkflow(options: {
       builder.dependsOn(`approval-${env}`, index === 0 ? ['push'] : [`deploy-${environments[index - 1]}`]);
 
       builder.task(deployId, `Deploy to ${env}`, deployAction, {
-        image: '${{outputs.build.tag}}',
+        image: '\${{outputs.build.tag}}',
         environment: env,
         service: projectName,
       });
       builder.dependsOn(deployId, [`approval-${env}`]);
     } else {
       builder.task(deployId, `Deploy to ${env}`, deployAction, {
-        image: '${{outputs.build.tag}}',
+        image: '\${{outputs.build.tag}}',
         environment: env,
         service: projectName,
       });
@@ -136,33 +136,33 @@ export function createK8sDeployWorkflow(options: {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${{env.DEPLOYMENT}}
-  namespace: ${{env.NAMESPACE}}
+  name: \${{env.DEPLOYMENT}}
+  namespace: \${{env.NAMESPACE}}
 spec:
-  replicas: ${{env.REPLICAS}}
+  replicas: \${{env.REPLICAS}}
   selector:
     matchLabels:
-      app: ${{env.DEPLOYMENT}}
+      app: \${{env.DEPLOYMENT}}
   template:
     metadata:
       labels:
-        app: ${{env.DEPLOYMENT}}
+        app: \${{env.DEPLOYMENT}}
     spec:
       containers:
-      - name: ${{env.DEPLOYMENT}}
-        image: ${{env.IMAGE}}
+      - name: \${{env.DEPLOYMENT}}
+        image: \${{env.IMAGE}}
         ports:
         - containerPort: 8080
 `,
     })
     .task('wait-rollout', 'Wait for Rollout', 'kubernetes.rollout', {
-      deployment: '${{env.DEPLOYMENT}}',
-      namespace: '${{env.NAMESPACE}}',
+      deployment: '\${{env.DEPLOYMENT}}',
+      namespace: '\${{env.NAMESPACE}}',
       timeout: 300,
     })
     .dependsOn('wait-rollout', ['update-image'])
     .task('verify', 'Verify Deployment', 'http.request', {
-      url: 'http://${{env.DEPLOYMENT}}.${{env.NAMESPACE}}.svc.cluster.local/health',
+      url: 'http://\${{env.DEPLOYMENT}}.\${{env.NAMESPACE}}.svc.cluster.local/health',
       method: 'GET',
       expectedStatus: 200,
     })
@@ -174,7 +174,7 @@ spec:
       type: 'task',
       config: {
         action: 'shell.exec',
-        params: { command: 'kubectl rollout undo deployment/${{env.DEPLOYMENT}} -n ${{env.NAMESPACE}}' },
+        params: { command: 'kubectl rollout undo deployment/\${{env.DEPLOYMENT}} -n \${{env.NAMESPACE}}' },
       },
     }])
     .build();
@@ -203,7 +203,7 @@ export function createDbMigrationWorkflow(options: {
       MIGRATION_TOOL: migrationTool,
     })
     .task('backup', 'Backup Database', 'shell.exec', {
-      command: `pg_dump ${{env.DATABASE_URL}} > backup_$(date +%Y%m%d_%H%M%S).sql`,
+      command: `pg_dump \${{env.DATABASE_URL}} > backup_$(date +%Y%m%d_%H%M%S).sql`,
     })
     .timeout('backup', 300000)
     .task('dry-run', 'Dry Run Migration', 'shell.exec', {
@@ -228,7 +228,7 @@ export function createDbMigrationWorkflow(options: {
       type: 'task',
       config: {
         action: 'shell.exec',
-        params: { command: 'psql ${{env.DATABASE_URL}} < backup_*.sql' },
+        params: { command: 'psql \${{env.DATABASE_URL}} < backup_*.sql' },
       },
     }])
     .build();
@@ -252,16 +252,16 @@ export function createBlueGreenWorkflow(options: {
       HEALTH_PATH: healthCheckPath,
     })
     .task('identify-current', 'Identify Current Environment', 'shell.exec', {
-      command: 'kubectl get service ${{env.SERVICE_NAME}} -o jsonpath="{.spec.selector.version}"',
+      command: 'kubectl get service \${{env.SERVICE_NAME}} -o jsonpath="{.spec.selector.version}"',
       outputs: ['currentVersion'],
     })
     .task('deploy-inactive', 'Deploy to Inactive Environment', 'kubernetes.apply', {
-      manifest: '${{env.MANIFEST}}',
+      manifest: '\${{env.MANIFEST}}',
       namespace: 'default',
     })
     .dependsOn('deploy-inactive', ['identify-current'])
     .task('wait-healthy', 'Wait for Health', 'http.request', {
-      url: 'http://${{env.SERVICE_NAME}}-inactive${{env.HEALTH_PATH}}',
+      url: 'http://\${{env.SERVICE_NAME}}-inactive\${{env.HEALTH_PATH}}',
       method: 'GET',
       expectedStatus: 200,
       retries: 10,
@@ -271,24 +271,24 @@ export function createBlueGreenWorkflow(options: {
     .retries('wait-healthy', 10)
     .task('run-smoke-tests', 'Run Smoke Tests', 'test.run', {
       suite: 'smoke',
-      target: '${{env.SERVICE_NAME}}-inactive',
+      target: '\${{env.SERVICE_NAME}}-inactive',
     })
     .dependsOn('run-smoke-tests', ['wait-healthy'])
     .approval('approve-switch', 'Approve Traffic Switch', 
       'Switch traffic to new deployment?')
     .dependsOn('approve-switch', ['run-smoke-tests'])
     .task('switch-traffic', 'Switch Traffic', 'shell.exec', {
-      command: `kubectl patch service ${{env.SERVICE_NAME}} -p '{"spec":{"selector":{"version":"${{outputs.newVersion}}"}}}'`,
+      command: `kubectl patch service \${{env.SERVICE_NAME}} -p '{"spec":{"selector":{"version":"\${{outputs.newVersion}}"}}}'`,
     })
     .dependsOn('switch-traffic', ['approve-switch'])
     .task('verify-production', 'Verify Production', 'http.request', {
-      url: 'http://${{env.LOAD_BALANCER}}${{env.HEALTH_PATH}}',
+      url: 'http://\${{env.LOAD_BALANCER}}\${{env.HEALTH_PATH}}',
       method: 'GET',
       expectedStatus: 200,
     })
     .dependsOn('verify-production', ['switch-traffic'])
     .task('cleanup-old', 'Cleanup Old Environment', 'kubernetes.scale', {
-      deployment: '${{env.SERVICE_NAME}}-old',
+      deployment: '\${{env.SERVICE_NAME}}-old',
       replicas: 0,
     })
     .dependsOn('cleanup-old', ['verify-production'])
@@ -300,7 +300,7 @@ export function createBlueGreenWorkflow(options: {
       config: {
         action: 'shell.exec',
         params: {
-          command: `kubectl patch service ${{env.SERVICE_NAME}} -p '{"spec":{"selector":{"version":"${{outputs.identify-current.currentVersion}}"}}}'`,
+          command: `kubectl patch service \${{env.SERVICE_NAME}} -p '{"spec":{"selector":{"version":"\${{outputs.identify-current.currentVersion}}"}}}'`,
         },
       },
     }])
@@ -327,14 +327,14 @@ export function createInfraWorkflow(options: {
       TF_VAR_environment: environment,
     })
     .task('tf-init', 'Terraform Init', 'shell.exec', {
-      command: 'terraform init -backend-config="key=${{env.PROJECT}}/${{env.ENVIRONMENT}}/terraform.tfstate"',
+      command: 'terraform init -backend-config="key=\${{env.PROJECT}}/\${{env.ENVIRONMENT}}/terraform.tfstate"',
     })
     .task('tf-validate', 'Terraform Validate', 'shell.exec', {
       command: 'terraform validate',
     })
     .dependsOn('tf-validate', ['tf-init'])
     .task('tf-plan', 'Terraform Plan', 'shell.exec', {
-      command: 'terraform plan -out=tfplan -var-file=${{env.ENVIRONMENT}}.tfvars',
+      command: 'terraform plan -out=tfplan -var-file=\${{env.ENVIRONMENT}}.tfvars',
       outputs: ['planFile'],
     })
     .dependsOn('tf-plan', ['tf-validate'])
@@ -383,10 +383,10 @@ export function createCanaryWorkflow(options: {
       CANARY_PERCENT: String(canaryPercentage),
     })
     .task('deploy-canary', 'Deploy Canary', 'kubernetes.apply', {
-      manifest: '${{env.CANARY_MANIFEST}}',
+      manifest: '\${{env.CANARY_MANIFEST}}',
     })
     .task('configure-traffic', 'Configure Traffic Split', 'shell.exec', {
-      command: `kubectl patch virtualservice ${{env.SERVICE}} --type merge -p '{"spec":{"http":[{"route":[{"destination":{"host":"${{env.SERVICE}}","subset":"stable"},"weight":${100 - canaryPercentage}},{"destination":{"host":"${{env.SERVICE}}","subset":"canary"},"weight":${canaryPercentage}}]}]}}'`,
+      command: `kubectl patch virtualservice \${{env.SERVICE}} --type merge -p '{"spec":{"http":[{"route":[{"destination":{"host":"\${{env.SERVICE}}","subset":"stable"},"weight":${100 - canaryPercentage}},{"destination":{"host":"\${{env.SERVICE}}","subset":"canary"},"weight":${canaryPercentage}}]}]}}'`,
     })
     .dependsOn('configure-traffic', ['deploy-canary'])
     .task('wait-evaluation', 'Evaluate Canary', 'wait', {
@@ -394,7 +394,7 @@ export function createCanaryWorkflow(options: {
     })
     .dependsOn('wait-evaluation', ['configure-traffic'])
     .task('check-metrics', 'Check Metrics', 'http.request', {
-      url: '${{env.PROMETHEUS_URL}}/api/v1/query?query=rate(http_requests_total{service="${{env.SERVICE}}",status="5xx"}[5m])',
+      url: '\${{env.PROMETHEUS_URL}}/api/v1/query?query=rate(http_requests_total{service="\${{env.SERVICE}}",status="5xx"}[5m])',
       method: 'GET',
     })
     .dependsOn('check-metrics', ['wait-evaluation'])
@@ -406,7 +406,7 @@ export function createCanaryWorkflow(options: {
         type: 'task',
         config: {
           action: 'shell.exec',
-          params: { command: 'kubectl patch virtualservice ${{env.SERVICE}} --type merge -p \'{"spec":{"http":[{"route":[{"destination":{"host":"${{env.SERVICE}}","subset":"canary"},"weight":100}]}]}}\'' },
+          params: { command: 'kubectl patch virtualservice \${{env.SERVICE}} --type merge -p \'{"spec":{"http":[{"route":[{"destination":{"host":"\${{env.SERVICE}}","subset":"canary"},"weight":100}]}]}}\'' },
         },
       }],
       [{
@@ -415,7 +415,7 @@ export function createCanaryWorkflow(options: {
         type: 'task',
         config: {
           action: 'shell.exec',
-          params: { command: 'kubectl patch virtualservice ${{env.SERVICE}} --type merge -p \'{"spec":{"http":[{"route":[{"destination":{"host":"${{env.SERVICE}}","subset":"stable"},"weight":100}]}]}}\'' },
+          params: { command: 'kubectl patch virtualservice \${{env.SERVICE}} --type merge -p \'{"spec":{"http":[{"route":[{"destination":{"host":"\${{env.SERVICE}}","subset":"stable"},"weight":100}]}]}}\'' },
         },
       }])
     .dependsOn('evaluate-success', ['check-metrics'])
