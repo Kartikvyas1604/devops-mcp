@@ -1,0 +1,195 @@
+{
+  "name": "genie-ops",
+  "displayName": "Genie-ops",
+  "description": "Genie-ops is the world's most powerful DevOps automation platform. Execute any cloud, CI/CD, or integration task via natural language with multi-AI orchestration.",
+  "version": "1.0.0",
+  "publisher": "0xkartikvyas",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "SCM Providers",
+    "Machine Learning",
+    "Azure",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "devops",
+    "ai",
+    "automation",
+    "cloud",
+    "aws",
+    "gcp",
+    "azure",
+    "kubernetes",
+    "docker",
+    "ci-cd"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "genie-ops",
+          "title": "Genie-ops",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "genie-ops": [
+        {
+          "type": "webview",
+          "id": "genie-ops.chatView",
+          "name": "Genie-ops Control Center"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "genie-ops.openChat",
+        "title": "Genie-ops: Open Control Center",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.runTask",
+        "title": "Genie-ops: Run DevOps Task",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.github",
+        "title": "Genie-ops: Connect GitHub",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.docker",
+        "title": "Genie-ops: Connect Docker",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.aws",
+        "title": "Genie-ops: Connect AWS",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.slack",
+        "title": "Genie-ops: Connect Slack",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.jira",
+        "title": "Genie-ops: Connect Jira",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.gcp",
+        "title": "Genie-ops: Connect Google Cloud",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.azure",
+        "title": "Genie-ops: Connect Azure",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.connectService.kubernetes",
+        "title": "Genie-ops: Connect Kubernetes",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.cloneEnvironment",
+        "title": "Genie-ops: Clone Environment",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.vibeCode",
+        "title": "Genie-ops: Vibe Code Application",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.rollbackLastAction",
+        "title": "Genie-ops: Rollback Last Action",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.showConnectionGraph",
+        "title": "Genie-ops: Show Connection Graph",
+        "category": "Genie-ops"
+      },
+      {
+        "command": "genie-ops.syncSecrets",
+        "title": "Genie-ops: Sync Secrets to Vault",
+        "category": "Genie-ops"
+      }
+    ],
+    "configuration": {
+      "title": "Genie-ops",
+      "properties": {
+        "genieOps.telemetry.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous usage telemetry for Genie-ops. Disabled by default for privacy."
+        },
+        "genieOps.models.claude.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Claude 3.5 Sonnet via Anthropic SDK as the primary model."
+        },
+        "genieOps.models.openai.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable OpenAI GPT-4o as a secondary model."
+        },
+        "genieOps.models.gemini.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Gemini Pro for Google Cloud specific tasks."
+        },
+        "genieOps.models.mistral.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Mistral for fast local-style completions."
+        },
+        "genieOps.models.perplexity.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Perplexity API for trending tech radar lookups."
+        },
+        "genieOps.autoContext.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically analyze project context and pre-load it for AI models."
+        },
+        "genieOps.parallelExecution.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run multiple AI models in parallel for complex tasks (model race mode)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./tsconfig.json",
+    "watch": "tsc -watch -p ./tsconfig.json",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "20.x",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.0"
+  }
+}
