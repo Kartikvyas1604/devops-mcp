@@ -110,7 +110,7 @@ export class AdvancedCache<T = unknown> {
         // Update access metadata
         entry.accessedAt = Date.now();
         entry.accessCount++;
-        
+
         this.stats.hits++;
         this.updateHitRate();
         this.recordAccessTime(Date.now() - startTime);
