@@ -1,55 +1,290 @@
 {
   "name": "devops-omnibus",
   "displayName": "DevOps Omnibus",
-  "description": "An extension that automates developer tasks using natural language commands, integrating with various DevOps and cloud services.",
+  "description": "The world's most powerful developer automation platform. Natural language commands for all DevOps, cloud, and integration tasks.",
   "version": "0.1.0",
-  "publisher": "your-name",
-  "engines": {
-    "vscode": "^1.60.0"
+  "publisher": "devops-omnibus",
+  "icon": "resources/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devops-omnibus/devops-omnibus"
   },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "devops",
+    "aws",
+    "azure",
+    "gcp",
+    "kubernetes",
+    "docker",
+    "ci/cd",
+    "ai",
+    "automation"
+  ],
   "activationEvents": [
-    "onCommand:devops-omnibus.runCommand"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "devops-omnibus.runCommand",
-        "title": "Run DevOps Command"
+        "title": "DevOps Omnibus: Run Command",
+        "icon": "$(play)"
+      },
+      {
+        "command": "devops-omnibus.openChat",
+        "title": "DevOps Omnibus: Open Chat Panel",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "devops-omnibus.connectService",
+        "title": "DevOps Omnibus: Connect Service",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "devops-omnibus.disconnectService",
+        "title": "DevOps Omnibus: Disconnect Service",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "devops-omnibus.showConnections",
+        "title": "DevOps Omnibus: Show Connections",
+        "icon": "$(server)"
+      },
+      {
+        "command": "devops-omnibus.analyzeProject",
+        "title": "DevOps Omnibus: Analyze Project",
+        "icon": "$(search)"
+      },
+      {
+        "command": "devops-omnibus.generateDockerfile",
+        "title": "DevOps Omnibus: Generate Dockerfile",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "devops-omnibus.generateCICD",
+        "title": "DevOps Omnibus: Generate CI/CD Pipeline",
+        "icon": "$(github-action)"
+      },
+      {
+        "command": "devops-omnibus.deployToCloud",
+        "title": "DevOps Omnibus: Deploy to Cloud",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "devops-omnibus.vibeCode",
+        "title": "DevOps Omnibus: Vibe Code New Project",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "devops-omnibus.cloneEnvironment",
+        "title": "DevOps Omnibus: Clone Environment",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "devops-omnibus.manageSecrets",
+        "title": "DevOps Omnibus: Manage Secrets",
+        "icon": "$(key)"
+      },
+      {
+        "command": "devops-omnibus.refreshConnections",
+        "title": "Refresh Connections",
+        "icon": "$(refresh)"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devops-omnibus",
+          "title": "DevOps Omnibus",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "devops-omnibus": [
+        {
+          "type": "webview",
+          "id": "devops-omnibus.chatView",
+          "name": "Chat",
+          "icon": "$(comment-discussion)",
+          "visibility": "visible"
+        },
+        {
+          "id": "devops-omnibus.connectionsView",
+          "name": "Connections",
+          "icon": "$(plug)"
+        },
+        {
+          "id": "devops-omnibus.pipelinesView",
+          "name": "Pipelines",
+          "icon": "$(github-action)"
+        },
+        {
+          "id": "devops-omnibus.resourcesView",
+          "name": "Cloud Resources",
+          "icon": "$(cloud)"
+        },
+        {
+          "id": "devops-omnibus.historyView",
+          "name": "History",
+          "icon": "$(history)"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "devops-omnibus.connectionsView",
+        "contents": "No services connected yet.\n[Connect Service](command:devops-omnibus.connectService)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "devops-omnibus.refreshConnections",
+          "when": "view == devops-omnibus.connectionsView",
+          "group": "navigation"
+        },
+        {
+          "command": "devops-omnibus.connectService",
+          "when": "view == devops-omnibus.connectionsView",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "devops-omnibus.runCommand",
+          "when": "true"
+        }
+      ]
+    },
     "configuration": {
-      "type": "object",
-      "title": "DevOps Omnibus Configuration",
+      "title": "DevOps Omnibus",
       "properties": {
-        "devops-omnibus.apiKey": {
+        "devops-omnibus.aiProvider": {
+          "type": "string",
+          "default": "anthropic",
+          "enum": [
+            "anthropic",
+            "openai",
+            "google",
+            "mistral",
+            "local"
+          ],
+          "description": "Primary AI provider for command processing"
+        },
+        "devops-omnibus.anthropicApiKey": {
           "type": "string",
           "default": "",
-          "description": "API key for accessing external services."
+          "description": "Anthropic API key for Claude models"
+        },
+        "devops-omnibus.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key for GPT models"
+        },
+        "devops-omnibus.googleApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Google API key for Gemini models"
+        },
+        "devops-omnibus.enableParallelModels": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run multiple AI models in parallel for complex tasks"
+        },
+        "devops-omnibus.enableTelemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous usage telemetry (GDPR compliant)"
+        },
+        "devops-omnibus.defaultCloud": {
+          "type": "string",
+          "default": "aws",
+          "enum": [
+            "aws",
+            "gcp",
+            "azure"
+          ],
+          "description": "Default cloud provider for deployments"
+        },
+        "devops-omnibus.autoAnalyzeProject": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically analyze project on workspace open"
+        },
+        "devops-omnibus.secretsBackend": {
+          "type": "string",
+          "default": "vscode",
+          "enum": [
+            "vscode",
+            "aws-secrets-manager",
+            "hashicorp-vault",
+            "doppler"
+          ],
+          "description": "Backend for secrets management"
+        },
+        "devops-omnibus.mcpServerPort": {
+          "type": "number",
+          "default": 3000,
+          "description": "Port for MCP server communication"
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "devops-omnibus.runCommand",
+        "key": "ctrl+shift+d",
+        "mac": "cmd+shift+d"
+      },
+      {
+        "command": "devops-omnibus.openChat",
+        "key": "ctrl+shift+o",
+        "mac": "cmd+shift+o"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "build": "webpack --mode production",
-    "test": "mocha --require ts-node/register test/suite/**/*.test.ts"
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "@types/vscode": "^1.60.0",
+    "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.56.0",
+    "mocha": "^10.2.0",
+    "prettier": "^3.2.4",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "webpack": "^5.58.2",
-    "webpack-cli": "^4.9.1",
-    "mocha": "^9.1.3",
-    "ts-node": "^10.4.0",
-    "eslint": "^7.32.0",
-    "prettier": "^2.4.1"
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "dotenv": "^10.0.0"
+    "@anthropic-ai/sdk": "^0.20.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.6.5",
+    "dockerode": "^4.0.2",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^4.26.0",
+    "ws": "^8.16.0"
   }
 }
