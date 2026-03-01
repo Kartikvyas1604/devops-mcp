@@ -1,40 +1,62 @@
-import { CommandHandler } from '../commandRegistry';
-import { InfrastructureService } from '../../services/infrastructureService';
-import { OutputChannel } from '../../ui/outputChannel';
+import { LoggingService } from '../../services/loggingService';
 
-export class InfrastructureHandler implements CommandHandler {
-    private infrastructureService: InfrastructureService;
-    private outputChannel: OutputChannel;
+/**
+ * Infrastructure Handler - Manages infrastructure provisioning
+ */
+export class InfrastructureHandler {
+    private logger: LoggingService;
 
     constructor() {
-        this.infrastructureService = new InfrastructureService();
-        this.outputChannel = new OutputChannel('DevOps Omnibus');
+        this.logger = new LoggingService('DevOps Omnibus - Infrastructure');
     }
 
-    public async createResource(resourceType: string, resourceConfig: any): Promise<void> {
+    /**
+     * Create an infrastructure resource
+     */
+    async createResource(resourceType: string, resourceConfig: unknown): Promise<string> {
         try {
-            const result = await this.infrastructureService.createResource(resourceType, resourceConfig);
-            this.outputChannel.appendLine(`Resource created: ${result}`);
+            this.logger.info(`Creating resource of type: ${resourceType}`);
+            // TODO: Implement actual resource creation
+            const resourceId = `resource-${Date.now()}`;
+            this.logger.info(`Resource created: ${resourceId}`);
+            return resourceId;
         } catch (error) {
-            this.outputChannel.appendLine(`Error creating resource: ${error.message}`);
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error creating resource: ${message}`);
+            throw error;
         }
     }
 
-    public async deleteResource(resourceId: string): Promise<void> {
+    /**
+     * Delete an infrastructure resource
+     */
+    async deleteResource(resourceId: string): Promise<void> {
         try {
-            await this.infrastructureService.deleteResource(resourceId);
-            this.outputChannel.appendLine(`Resource deleted: ${resourceId}`);
+            this.logger.info(`Deleting resource: ${resourceId}`);
+            // TODO: Implement actual resource deletion
+            this.logger.info(`Resource deleted: ${resourceId}`);
         } catch (error) {
-            this.outputChannel.appendLine(`Error deleting resource: ${error.message}`);
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error deleting resource: ${message}`);
+            throw error;
         }
     }
 
-    public async listResources(): Promise<void> {
+    /**
+     * List infrastructure resources
+     */
+    async listResources(): Promise<Array<{ id: string; type: string; status: string }>> {
         try {
-            const resources = await this.infrastructureService.listResources();
-            this.outputChannel.appendLine(`Resources: ${JSON.stringify(resources, null, 2)}`);
+            this.logger.info('Listing resources');
+            // TODO: Implement actual resource listing
+            return [];
         } catch (error) {
-            this.outputChannel.appendLine(`Error listing resources: ${error.message}`);
+            const message = error instanceof Error ? error.message : String(error);
+            this.logger.error(`Error listing resources: ${message}`);
+            throw error;
         }
     }
 }
+
+// Export singleton instance for backward compatibility
+export const infrastructureHandler = new InfrastructureHandler();

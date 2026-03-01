@@ -1,11 +1,16 @@
-import { RateLimiter } from 'limiter';
+import { TokenBucketRateLimiter } from './resilience';
 
-const limiter = new RateLimiter({
-  tokensPerInterval: 5, // Number of allowed requests
-  interval: 'minute', // Time interval for the rate limit
-});
+/**
+ * Default rate limiter instance
+ * 5 requests per minute
+ */
+const limiter = new TokenBucketRateLimiter(5, 5 / 60);
 
-export const executeWithRateLimit = async (action: () => Promise<void>) => {
-  await limiter.removeTokens(1); // Remove a token for the action
-  await action(); // Execute the action
+/**
+ * Execute a function with rate limiting
+ */
+export const executeWithRateLimit = async <T>(action: () => Promise<T>): Promise<T> => {
+    return limiter.execute(action);
 };
+
+export { limiter };

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 export class DashboardPanel {
     public static currentPanel: DashboardPanel | undefined;
+    private static disposables: vscode.Disposable[] = [];
 
     private readonly panel: vscode.WebviewPanel;
     private readonly extensionUri: vscode.Uri;
@@ -10,7 +11,7 @@ export class DashboardPanel {
         this.panel = panel;
         this.extensionUri = extensionUri;
 
-        this.panel.onDidDispose(() => this.dispose(), null, context.subscriptions);
+        this.panel.onDidDispose(() => this.dispose(), null, DashboardPanel.disposables);
         this.update();
     }
 

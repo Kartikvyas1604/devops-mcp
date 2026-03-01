@@ -1,14 +1,32 @@
-import { isEmail, isURL } from 'validator';
-
+/**
+ * Validate email format
+ */
 export function validateEmail(email: string): boolean {
-    return isEmail(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
 
+/**
+ * Validate URL format
+ */
 export function validateURL(url: string): boolean {
-    return isURL(url);
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
-export function validateConfig(config: Record<string, any>, schema: Record<string, any>): boolean {
-    // Implement schema validation logic here
-    return true; // Placeholder return value
+/**
+ * Validate configuration against a schema
+ */
+export function validateConfig(config: Record<string, unknown>, schema: Record<string, unknown>): boolean {
+    // Basic schema validation
+    for (const key of Object.keys(schema)) {
+        if (!(key in config)) {
+            return false;
+        }
+    }
+    return true;
 }

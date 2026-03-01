@@ -1,14 +1,23 @@
-import { registerCommand } from './commandRegistry';
-import { cicdHandler } from './handlers/cicdHandler';
-import { cloudHandler } from './handlers/cloudHandler';
-import { containerHandler } from './handlers/containerHandler';
-import { gitHandler } from './handlers/gitHandler';
-import { infrastructureHandler } from './handlers/infrastructureHandler';
+import { CommandRegistry, registerCommand, CommandHandler } from './commandRegistry';
+import { CicdHandler, cicdHandler } from './handlers/cicdHandler';
+import { CloudHandler, cloudHandler } from './handlers/cloudHandler';
+import { ContainerHandler, containerHandler } from './handlers/containerHandler';
+import { GitHandler, gitHandler } from './handlers/gitHandler';
+import { InfrastructureHandler, infrastructureHandler } from './handlers/infrastructureHandler';
 
-export function registerCommands() {
-    registerCommand('devops.cicd', cicdHandler);
-    registerCommand('devops.cloud', cloudHandler);
-    registerCommand('devops.container', containerHandler);
-    registerCommand('devops.git', gitHandler);
-    registerCommand('devops.infrastructure', infrastructureHandler);
-}
+export {
+    CommandRegistry,
+    registerCommand,
+    CicdHandler,
+    CloudHandler,
+    ContainerHandler,
+    GitHandler,
+    InfrastructureHandler,
+    cicdHandler,
+    cloudHandler,
+    containerHandler,
+    gitHandler,
+    infrastructureHandler
+};
+
+export type { CommandHandler };

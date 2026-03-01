@@ -1,17 +1,14 @@
-import { AwsClient } from './aws/awsClient';
-import { AzureClient } from './azure/azureClient';
-import { GcpClient } from './gcp/gcpClient';
-import { DockerClient } from './docker/dockerClient';
-import { K8sClient } from './kubernetes/k8sClient';
-import { GithubClient } from './github/githubClient';
-import { GitlabClient } from './gitlab/gitlabClient';
-import { JenkinsClient } from './jenkins/jenkinsClient';
+// Re-export all provider classes
+export { default as AwsClient } from './aws/awsClient';
+export { AzureClient } from './azure/azureClient';
+export { GCPClient } from './gcp/gcpClient';
+export { DockerClient } from './docker/dockerClient';
+export { K8sClient } from './kubernetes/k8sClient';
+export { GitHubClient } from './github/githubClient';
+export { GitLabClient } from './gitlab/gitlabClient';
+export { JenkinsClient } from './jenkins/jenkinsClient';
 
-export const aws = new AwsClient();
-export const azure = new AzureClient();
-export const gcp = new GcpClient();
-export const docker = new DockerClient();
-export const kubernetes = new K8sClient();
-export const github = new GithubClient();
-export const gitlab = new GitlabClient();
-export const jenkins = new JenkinsClient();
+// Type aliases for backward compatibility
+export type GcpClient = import('./gcp/gcpClient').GCPClient;
+export type GithubClient = import('./github/githubClient').GitHubClient;
+export type GitlabClient = import('./gitlab/gitlabClient').GitLabClient;

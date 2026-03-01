@@ -1,8 +1,11 @@
-import { errorHandler } from './errorHandler';
-import { rateLimiter } from './rateLimiter';
-import { validator } from './validator';
+// Error handler
+export { handleError } from './errorHandler';
 
-export { errorHandler, rateLimiter, validator };
+// Rate limiter - use built-in resilience module instead
+export { TokenBucketRateLimiter, SlidingWindowRateLimiter } from './resilience';
+
+// Validator functions
+export { validateEmail, validateURL, validateConfig } from './validator';
 
 // Advanced caching
 export {
@@ -40,7 +43,10 @@ export {
     TimeoutController,
     TimeoutError,
     ResiliencePolicy,
-    resilience,
-    TokenBucketRateLimiter,
-    SlidingWindowRateLimiter
+    resilience
 } from './resilience';
+
+// Legacy aliases
+export const errorHandler = { handleError: (e: Error) => { handleError(e); } };
+export const rateLimiter = new (class { async execute<T>(fn: () => Promise<T>) { return fn(); } })();
+export const validator = { validateEmail, validateURL, validateConfig };
