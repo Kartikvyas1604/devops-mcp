@@ -2,20 +2,27 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
-            "type": "shell",
-            "command": "tsc -p tsconfig.json",
+            "type": "npm",
+            "script": "compile",
+            "problemMatcher": "$tsc",
+            "isBackground": false,
+            "presentation": {
+                "reveal": "silent"
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "problemMatcher": ["$tsc"],
-            "presentation": {
-                "reveal": "always",
-                "echo": true,
-                "focus": true,
-                "panel": "shared"
             }
+        },
+        {
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "silent"
+            },
+            "group": "build"
         },
         {
             "label": "test",
@@ -25,7 +32,9 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "problemMatcher": ["$tsc"],
+            "problemMatcher": [
+                "$tsc"
+            ],
             "presentation": {
                 "reveal": "always",
                 "echo": true,

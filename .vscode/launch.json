@@ -2,15 +2,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
+            "name": "Run Extension",
+            "type": "extensionHost",
             "request": "launch",
-            "name": "Launch Extension",
-            "program": "${workspaceFolder}/src/extension.ts",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
             ],
-            "preLaunchTask": "npm: watch",
-            "internalConsoleOptions": "openOnSessionStart"
+            "preLaunchTask": "npm: compile"
+        },
+        {
+            "name": "Extension Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm: compile"
         }
     ]
 }

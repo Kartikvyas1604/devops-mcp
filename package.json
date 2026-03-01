@@ -10,7 +10,7 @@
   "activationEvents": [
     "onCommand:devops-omnibus.runCommand"
   ],
-  "main": "./src/extension.ts",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -31,11 +31,16 @@
     }
   },
   "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
     "build": "webpack --mode production",
     "test": "mocha --require ts-node/register test/suite/**/*.test.ts"
   },
   "devDependencies": {
-    "typescript": "^4.4.3",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.60.0",
+    "typescript": "^5.3.3",
     "webpack": "^5.58.2",
     "webpack-cli": "^4.9.1",
     "mocha": "^9.1.3",

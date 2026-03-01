@@ -1,19 +1,33 @@
 import * as vscode from 'vscode';
-import { registerCommands } from './commands/index';
-import { activateSidebar } from './ui/index';
-import { connectToMCPServer } from './services/authService';
 
-export function activate(context: vscode.ExtensionContext) {
-    // Register commands
-    registerCommands(context);
+/**
+ * Called when the extension is activated
+ */
+export function activate(context: vscode.ExtensionContext): void {
+    console.log('DevOps Omnibus is now active!');
 
-    // Activate the sidebar
-    activateSidebar(context);
+    // Register the main command
+    const runCommand = vscode.commands.registerCommand(
+        'devops-omnibus.runCommand',
+        async () => {
+            const input = await vscode.window.showInputBox({
+                prompt: 'Enter your DevOps command',
+                placeHolder: 'e.g., "Deploy this to AWS Lambda"'
+            });
 
-    // Connect to the MCP server
-    connectToMCPServer();
+            if (input) {
+                vscode.window.showInformationMessage(`Executing: ${input}`);
+                // TODO: Process through NLP and execute
+            }
+        }
+    );
+
+    context.subscriptions.push(runCommand);
 }
 
-export function deactivate() {
-    // Clean up resources if necessary
+/**
+ * Called when the extension is deactivated
+ */
+export function deactivate(): void {
+    console.log('DevOps Omnibus deactivated');
 }
