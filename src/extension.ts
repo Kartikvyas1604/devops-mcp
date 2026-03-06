@@ -20,6 +20,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     console.log('🧞 GenieOps is now active!');
 
     try {
+        // Create status bar item
+        const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+        statusBarItem.text = '🧞 GenieOps';
+        statusBarItem.tooltip = 'Click to open GenieOps Chat';
+        statusBarItem.command = 'genieops.openChat';
+        statusBarItem.show();
+        context.subscriptions.push(statusBarItem);
+
         // Initialize services
         credentialManager = new CredentialManager(context);
         oauthWebView = new OAuthWebView(context);
@@ -43,22 +51,37 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         // Register chat command
         context.subscriptions.push(
             vscode.commands.registerCommand('genieops.openChat', () => {
-                chatPanel = ChatPanel.createOrShow(context.extensionUri, credentialManager, projectScanner);
+                try {
+                    console.log('🧞 Opening GenieOps Chat Panel...');
+                    chatPanel = ChatPanel.createOrShow(context.extensionUri, credentialManager, projectScanner);
+                    console.log('✅ Chat panel created successfully');
+                } catch (error) {
+                    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+                    console.error('❌ Failed to open chat panel:', error);
+                    vscode.window.showErrorMessage(`Failed to open GenieOps Chat: ${errorMsg}`);
+                }
             })
         );
 
         // Register main command
         context.subscriptions.push(
             vscode.commands.registerCommand('genieops.runCommand', async () => {
-                const input = await vscode.window.showInputBox({
-                    placeHolder: 'Example: Deploy my Next.js app to Vercel',
-                    prompt: 'What do you want to do? (Type ONE sentence)',
-                    ignoreFocusOut: true
-                });
+                try {
+                    const input = await vscode.window.showInputBox({
+                        placeHolder: 'Example: Deploy my Next.js app to Vercel',
+                        prompt: 'What do you want to do? (Type ONE sentence)',
+                        ignoreFocusOut: true
+                    });
 
-                if (input) {
-                    chatPanel = ChatPanel.createOrShow(context.extensionUri, credentialManager, projectScanner);
-                    chatPanel.sendMessage(input);
+                    if (input) {
+                        console.log('🧞 Running command with input:', input);
+                        chatPanel = ChatPanel.createOrShow(context.extensionUri, credentialManager, projectScanner);
+                        chatPanel.sendMessage(input);
+                    }
+                } catch (error) {
+                    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+                    console.error('❌ Failed to run command:', error);
+                    vscode.window.showErrorMessage(`Failed to execute command: ${errorMsg}`);
                 }
             })
         );
@@ -136,6 +159,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         // Check for API key and show welcome
         await checkAndPromptForApiKey(context);
+        
+        // Show activation success
+        console.log('✅ GenieOps fully initialized and ready!');
 
     } catch (error) {
         vscode.window.showErrorMessage(`GenieOps activation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
