@@ -7,7 +7,7 @@ import {
     AIModelResponse,
     ProjectContext,
     GenieOpsConfig
-} from '../../../src/shared/types';
+} from '../types';
 
 /**
  * ModelRouter - Multi-Model AI Orchestration

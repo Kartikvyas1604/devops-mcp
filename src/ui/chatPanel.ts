@@ -116,7 +116,7 @@ export class ChatPanel {
         }
 
         try {
-            const analysis = await this.projectScanner.scanProject(workspaceFolder.uri.fsPath);
+            const analysis = await this.projectScanner.analyze(workspaceFolder.uri.fsPath);
 
             this._panel.webview.postMessage({
                 type: 'projectAnalysis',
