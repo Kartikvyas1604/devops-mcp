@@ -95,7 +95,7 @@ export class ChatPanel {
             const workspaceContext = await this.getWorkspaceContext();
 
             // Create enhanced prompt with context
-            const systemPrompt = `You are GenieOps, an expert AI DevOps assistant powered by Gemini Pro. You help developers with:
+            const systemPrompt = `You are GenieOps, an expert AI DevOps assistant powered by Gemini 1.5 Pro. You help developers with:
 - Cloud deployments (AWS, GCP, Azure)
 - Docker and Kubernetes
 - CI/CD pipelines
@@ -113,7 +113,7 @@ Provide practical, actionable responses. When suggesting commands or configurati
             this._panel.webview.postMessage({
                 type: 'aiResponse',
                 text: response,
-                model: 'gemini-pro'
+                model: 'gemini-1.5-pro'
             });
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -528,8 +528,8 @@ Provide practical, actionable responses. When suggesting commands or configurati
         <div class="control-group">
             <span class="control-label">Model</span>
             <select id="modelSelect" onchange="handleModelChange()">
-                <option value="gemini-pro" selected>Gemini Pro (Primary)</option>
-                <option value="gemini-flash">Gemini Flash (Fast)</option>
+                <option value="gemini-1.5-pro" selected>Gemini 1.5 Pro ⭐</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Fast)</option>
                 <option value="claude-3.5">Claude 3.5 Sonnet</option>
                 <option value="gpt-4">GPT-4 Turbo</option>
                 <option value="perplexity">Perplexity (Search)</option>
@@ -614,7 +614,7 @@ Provide practical, actionable responses. When suggesting commands or configurati
         const agentMode = document.getElementById('agentMode');
         const modeBadge = document.getElementById('modeBadge');
         
-        let currentModel = 'gemini-pro';
+        let currentModel = 'gemini-1.5-pro';
         let currentMode = 'agent';
         
         // Auto-resize textarea

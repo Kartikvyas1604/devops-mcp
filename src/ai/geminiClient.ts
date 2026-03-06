@@ -89,7 +89,8 @@ export class GeminiClient {
     }
 
     private async callGeminiAPI(messages: GeminiMessage[]): Promise<string> {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.apiKey}`;
+        // Use v1 API with gemini-1.5-pro-latest
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-latest:generateContent?key=${this.apiKey}`;
 
         const requestBody = {
             contents: messages,
