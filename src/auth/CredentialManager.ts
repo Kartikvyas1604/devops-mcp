@@ -183,7 +183,7 @@ export class CredentialManager {
     /**
      * Update connection status
      */
-    private async updateConnectionStatus(service: ServiceType, status: ConnectionStatus): Promise<void> {
+    async updateConnectionStatus(service: ServiceType, status: ConnectionStatus): Promise<void> {
         const key = this.getSecretKey(service, 'status');
         await this.secretStorage.store(key, status);
     }

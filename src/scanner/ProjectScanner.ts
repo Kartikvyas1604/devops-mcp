@@ -9,7 +9,7 @@ import {
     ServiceType
 } from '../shared/types';
 
-export class ProjectAnalyzer {
+export class ProjectScanner {
 
     async analyzeWorkspace(): Promise<ProjectContext | null> {
         const workspaceFolders = vscode.workspace.workspaceFolders;

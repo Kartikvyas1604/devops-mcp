@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { SecretsService, ServiceConnection } from '../../services/secretsService';
+import { CredentialManager } from '../../auth/CredentialManager';
+import { ServiceType } from '../../shared/types';
 
 /**
  * Connection tree item representing a connected service
@@ -54,11 +55,7 @@ export class ConnectionsTreeProvider implements vscode.TreeDataProvider<Connecti
     private _onDidChangeTreeData = new vscode.EventEmitter<ConnectionTreeItem | undefined | null | void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-    private secretsService: SecretsService;
-
-    constructor(secretsService: SecretsService) {
-        this.secretsService = secretsService;
-    }
+    constructor(private credentialManager: CredentialManager) {}
 
     /**
      * Refresh the tree view
@@ -79,42 +76,19 @@ export class ConnectionsTreeProvider implements vscode.TreeDataProvider<Connecti
      */
     async getChildren(element?: ConnectionTreeItem): Promise<ConnectionTreeItem[]> {
         if (element) {
-            // No nested children for now
             return [];
         }
 
-        // Get all available services
-        const allServices = [
-            { id: 'github', name: 'GitHub' },
-            { id: 'docker', name: 'Docker' },
-            { id: 'aws', name: 'AWS' },
-            { id: 'azure', name: 'Azure' },
-            { id: 'gcp', name: 'Google Cloud' },
-            { id: 'kubernetes', name: 'Kubernetes' },
-            { id: 'slack', name: 'Slack' },
-            { id: 'jira', name: 'Jira' }
-        ];
-
-        // Check connection status for each service
-        const items: ConnectionTreeItem[] = [];
-
-        for (const service of allServices) {
-            const isConnected = await this.secretsService.isConnected(service.id);
-            items.push(new ConnectionTreeItem(
-                service.id,
-                service.name,
-                isConnected ? 'connected' : 'disconnected',
+        // Get all connected services
+        const services = await this.credentialManager.listConnectedServices();
+        return services.map(service => 
+            new ConnectionTreeItem(
+                service.type,
+                service.displayName,
+                service.status as 'connected' | 'disconnected' | 'error',
                 vscode.TreeItemCollapsibleState.None
-            ));
-        }
-
-        // Sort by status (connected first)
-        items.sort((a, b) => {
-            if (a.status === 'connected' && b.status !== 'connected') return -1;
-            if (a.status !== 'connected' && b.status === 'connected') return 1;
-            return a.serviceName.localeCompare(b.serviceName);
-        });
-
-        return items;
+            )
+        );
     }
 }
+

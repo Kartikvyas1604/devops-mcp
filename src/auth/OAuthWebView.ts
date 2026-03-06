@@ -13,7 +13,7 @@ import { ServiceType, OAuthConfig, OAuthTokens, OAuthFlowType } from '../shared/
  * All OAuth flows happen inside VS Code WebView panels
  * with automatic token extraction and secure storage.
  */
-export class OAuthWebViewHandler {
+export class OAuthWebView {
     private readonly context: vscode.ExtensionContext;
     private pendingAuth: Map<string, { resolve: (tokens: OAuthTokens) => void; reject: (error: Error) => void }> = new Map();
 

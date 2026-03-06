@@ -16,10 +16,10 @@ import {
  * all responses for comparison (Model Race Mode).
  * 
  * Supported Models:
- * - Claude 3.5 Sonnet (Anthropic) - Primary for code generation
- * - GPT-4o (OpenAI) - Alternative implementations
- * - Gemini Pro (Google) - GCP-specific tasks
+ * - Gemini Pro (Google) - Primary for all tasks
  * - Gemini Flash (Google) - Fast completions
+ * - Claude 3.5 Sonnet (Anthropic) - Alternative for code generation
+ * - GPT-4o (OpenAI) - Alternative implementations
  * - Perplexity - Real-time web search for best practices
  * 
  * Features:
@@ -78,19 +78,19 @@ export class ModelRouter {
     ): Promise<AIModelResponse[]> {
         const promises: Promise<AIModelResponse>[] = [];
 
-        // Claude
+        // Gemini Pro - PRIMARY
+        if (this.google && this.config.models.gemini.enabled) {
+            promises.push(this.executeGemini(prompt, context, options));
+        }
+
+        // Claude - Secondary
         if (this.anthropic && this.config.models.claude.enabled) {
             promises.push(this.executeClaude(prompt, context, options));
         }
 
-        // GPT-4
+        // GPT-4 - Tertiary
         if (this.openai && this.config.models.openai.enabled) {
             promises.push(this.executeOpenAI(prompt, context, options));
-        }
-
-        // Gemini Pro
-        if (this.google && this.config.models.gemini.enabled) {
-            promises.push(this.executeGemini(prompt, context, options));
         }
 
         // Execute all in parallel
@@ -108,7 +108,7 @@ export class ModelRouter {
     }
 
     /**
-     * Execute with primary model (Claude) only
+     * Execute with primary model (Gemini) only
      */
     async executePrimary(
         prompt: string,
@@ -119,7 +119,12 @@ export class ModelRouter {
             maxTokens?: number;
         }
     ): Promise<AIModelResponse> {
-        // Try Claude first
+        // Try Gemini first (PRIMARY)
+        if (this.google && this.config.models.gemini.enabled) {
+            return this.executeGemini(prompt, context, options);
+        }
+
+        // Fallback to Claude
         if (this.anthropic && this.config.models.claude.enabled) {
             return this.executeClaude(prompt, context, options);
         }
@@ -127,11 +132,6 @@ export class ModelRouter {
         // Fallback to GPT-4
         if (this.openai && this.config.models.openai.enabled) {
             return this.executeOpenAI(prompt, context, options);
-        }
-
-        // Fallback to Gemini
-        if (this.google && this.config.models.gemini.enabled) {
-            return this.executeGemini(prompt, context, options);
         }
 
         throw new Error('No AI models configured. Please add API keys in settings.');
@@ -417,10 +417,14 @@ export class ModelRouter {
     }
 
     /**
-     * Get list of enabled models
+     * Get list of enabled models (Gemini listed first as primary)
      */
     getEnabledModels(): AIModelProvider[] {
         const enabled: AIModelProvider[] = [];
+
+        if (this.google && this.config.models.gemini.enabled) {
+            enabled.push(AIModelProvider.GEMINI);
+        }
 
         if (this.anthropic && this.config.models.claude.enabled) {
             enabled.push(AIModelProvider.CLAUDE);
@@ -428,10 +432,6 @@ export class ModelRouter {
 
         if (this.openai && this.config.models.openai.enabled) {
             enabled.push(AIModelProvider.GPT4);
-        }
-
-        if (this.google && this.config.models.gemini.enabled) {
-            enabled.push(AIModelProvider.GEMINI);
         }
 
         if (this.config.models.perplexity.enabled) {
