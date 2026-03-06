@@ -201,7 +201,7 @@ async function checkAndPromptForApiKey(context: vscode.ExtensionContext): Promis
         } else if (choice === 'Open Chat') {
             vscode.commands.executeCommand('genieops.openChat');
         }
-        
+
         await context.globalState.update('genieops.hasShownWelcome', true);
     }
 }
