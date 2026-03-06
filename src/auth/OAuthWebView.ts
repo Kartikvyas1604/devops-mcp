@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
-import { ServiceType, OAuthConfig, OAuthTokens, OAuthFlowType } from '../../shared/types';
+import { ServiceType, OAuthConfig, OAuthTokens, OAuthFlowType } from '../shared/types';
 
 /**
  * OAuthWebViewHandler - Manages OAuth 2.0 flows inside VS Code
@@ -59,7 +59,7 @@ export class OAuthWebViewHandler {
 
         // Show device code in WebView
         const panel = vscode.window.createWebviewPanel(
-            'omniops-device-auth',
+            'genieops-device-auth',
             `${this.getServiceDisplayName(config.service)} Authentication`,
             vscode.ViewColumn.One,
             {
@@ -125,7 +125,7 @@ export class OAuthWebViewHandler {
         config: OAuthConfig
     ): Promise<void> {
         const panel = vscode.window.createWebviewPanel(
-            'omniops-oauth',
+            'genieops-oauth',
             `${this.getServiceDisplayName(service)} Authentication`,
             vscode.ViewColumn.One,
             {
@@ -237,7 +237,13 @@ export class OAuthWebViewHandler {
             throw new Error(`Token exchange failed: ${error}`);
         }
 
-        const data = await response.json();
+        const data = await response.json() as {
+            access_token: string;
+            refresh_token?: string;
+            expires_in?: number;
+            token_type?: string;
+            scope?: string;
+        };
 
         return {
             accessToken: data.access_token,

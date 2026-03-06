@@ -1,25 +1,15 @@
 import * as vscode from 'vscode';
-import { SecretsService } from './services/secretsService';
-import { LoggingService } from './services/loggingService';
-import { ConfigService } from './services/configService';
-import { ChatViewProvider } from './ui/webviews/chatPanel';
-import { ConnectionsTreeProvider } from './ui/treeViews/connectionsTreeProvider';
-import { PipelinesTreeProvider } from './ui/treeViews/pipelinesTreeProvider';
-import { ResourcesTreeProvider } from './ui/treeViews/resourcesTreeProvider';
-import { HistoryTreeProvider } from './ui/treeViews/historyTreeProvider';
-import { StatusBarManager } from './ui/statusBar';
-import { MCPClient } from './mcp/client';
+import { CredentialManager } from './auth/CredentialManager';
+import { OAuthWebView } from './auth/OAuthWebView';
+import { ProjectScanner } from './scanner/ProjectScanner';
+import { ServiceType, ConnectionStatus } from './shared/types';
 import { ProjectAnalyzer } from './context/projectAnalyzer';
-import { CommandExecutor } from './commands/executor';
 
 /** Global extension state */
 let extensionContext: vscode.ExtensionContext;
-let mcpClient: MCPClient;
-let secretsService: SecretsService;
-let loggingService: LoggingService;
-let configService: ConfigService;
-let statusBarManager: StatusBarManager;
-let commandExecutor: CommandExecutor;
+let credentialManager: CredentialManager;
+let oauthWebView: OAuthWebView;
+let projectScanner: ProjectScanner;
 let projectAnalyzer: ProjectAnalyzer;
 
 /**
@@ -29,77 +19,42 @@ let projectAnalyzer: ProjectAnalyzer;
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     extensionContext = context;
     
-    // Initialize core services
-    loggingService = new LoggingService('DevOps Omnibus');
-    loggingService.info('Activating DevOps Omnibus extension...');
+    console.log('🧞 GenieOps is now active!');
     
     try {
-        // Initialize services
-        secretsService = new SecretsService(context);
-        configService = new ConfigService();
-        statusBarManager = new StatusBarManager();
+        // Initialize core services
+        credentialManager = new CredentialManager(context);
+        oauthWebView = new OAuthWebView(context);
+        projectScanner = new ProjectScanner();
         projectAnalyzer = new ProjectAnalyzer();
         
-        // Initialize MCP client
-        mcpClient = new MCPClient(configService, loggingService);
-        
-        // Initialize command executor
-        commandExecutor = new CommandExecutor(mcpClient, secretsService, loggingService);
-        
-        // Register tree view providers
-        const connectionsProvider = new ConnectionsTreeProvider(secretsService);
-        const pipelinesProvider = new PipelinesTreeProvider();
-        const resourcesProvider = new ResourcesTreeProvider();
-        const historyProvider = new HistoryTreeProvider();
-        
-        context.subscriptions.push(
-            vscode.window.registerTreeDataProvider('devops-omnibus.connectionsView', connectionsProvider),
-            vscode.window.registerTreeDataProvider('devops-omnibus.pipelinesView', pipelinesProvider),
-            vscode.window.registerTreeDataProvider('devops-omnibus.resourcesView', resourcesProvider),
-            vscode.window.registerTreeDataProvider('devops-omnibus.historyView', historyProvider)
-        );
-        
-        // Register WebView provider for chat
-        const chatProvider = new ChatViewProvider(context.extensionUri, commandExecutor, loggingService);
-        context.subscriptions.push(
-            vscode.window.registerWebviewViewProvider('devops-omnibus.chatView', chatProvider)
-        );
+        // TODO: Initialize tree view providers when they are created
+        // TODO: Initialize chat panel when it is created
         
         // Register all commands
-        registerCommands(context, connectionsProvider, pipelinesProvider, resourcesProvider, historyProvider);
+        registerCommands(context);
         
-        // Initialize status bar
-        statusBarManager.initialize(context);
-        
-        // Auto-analyze project if enabled
-        if (configService.get<boolean>('autoAnalyzeProject')) {
-            analyzeCurrentProject();
-        }
-        
-        // Start MCP server connection
-        await mcpClient.connect();
-        statusBarManager.setConnected(true);
-        
-        loggingService.info('DevOps Omnibus extension activated successfully!');
-        vscode.window.showInformationMessage('DevOps Omnibus is ready! Press Cmd+Shift+D to run a command.');
+        console.log('GenieOps extension activated successfully!');
+        vscode.window.showInformationMessage(
+            '🧞 GenieOps activated! Type "GenieOps: Run Command" to get started.',
+            'Get Started'
+        ).then(selection => {
+            if (selection === 'Get Started') {
+                vscode.commands.executeCommand('genieops.runCommand');
+            }
+        });
         
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        loggingService.error(`Failed to activate extension: ${errorMessage}`);
-        vscode.window.showErrorMessage(`DevOps Omnibus activation failed: ${errorMessage}`);
+        console.error(`Failed to activate extension: ${errorMessage}`);
+        vscode.window.showErrorMessage(`GenieOps activation failed: ${errorMessage}`);
     }
 }
 
 /**
  * Register all extension commands
  */
-function registerCommands(
-    context: vscode.ExtensionContext,
-    connectionsProvider: ConnectionsTreeProvider,
-    pipelinesProvider: PipelinesTreeProvider,
-    resourcesProvider: ResourcesTreeProvider,
-    historyProvider: HistoryTreeProvider
-): void {
+function registerCommands(context: vscode.ExtensionContext): void {
     
     // Main command - Run DevOps Command
     context.subscriptions.push(

@@ -6,8 +6,8 @@ import {
     AIModelConfig,
     AIModelResponse,
     ProjectContext,
-    OmniOpsConfig
-} from '../../../shared/types';
+    GenieOpsConfig
+} from '../../../src/shared/types';
 
 /**
  * ModelRouter - Multi-Model AI Orchestration
@@ -33,9 +33,9 @@ export class ModelRouter {
     private anthropic: Anthropic | null = null;
     private openai: OpenAI | null = null;
     private google: GoogleGenerativeAI | null = null;
-    private config: OmniOpsConfig;
+    private config: GenieOpsConfig;
 
-    constructor(config: OmniOpsConfig) {
+    constructor(config: GenieOpsConfig) {
         this.config = config;
         this.initializeClients();
     }
@@ -101,8 +101,6 @@ export class ModelRouter {
         for (const result of results) {
             if (result.status === 'fulfilled') {
                 responses.push(result.value);
-            } else {
-                console.error('Model execution failed:', result.reason);
             }
         }
 
@@ -191,8 +189,8 @@ export class ModelRouter {
                 finishReason: response.stop_reason || 'end_turn',
                 latency: Date.now() - startTime
             };
-        } catch (error: any) {
-            throw new Error(`Claude execution failed: ${error.message}`);
+        } catch (error: unknown) {
+            throw new Error(`Claude execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 
@@ -251,8 +249,8 @@ export class ModelRouter {
                 finishReason: choice.finish_reason || 'stop',
                 latency: Date.now() - startTime
             };
-        } catch (error: any) {
-            throw new Error(`OpenAI execution failed: ${error.message}`);
+        } catch (error: unknown) {
+            throw new Error(`OpenAI execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 
@@ -308,8 +306,8 @@ export class ModelRouter {
                 finishReason: 'stop',
                 latency: Date.now() - startTime
             };
-        } catch (error: any) {
-            throw new Error(`Gemini execution failed: ${error.message}`);
+        } catch (error: unknown) {
+            throw new Error(`Gemini execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 
@@ -394,16 +392,15 @@ export class ModelRouter {
 
             const data = await response.json();
             return data.choices[0]?.message?.content || 'No results found';
-        } catch (error: any) {
-            console.error('Perplexity search failed:', error);
-            return `Could not fetch trending practices: ${error.message}`;
+        } catch (error: unknown) {
+            return `Could not fetch trending practices: ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
     }
 
     /**
      * Update configuration (when user changes settings)
      */
-    updateConfig(config: OmniOpsConfig): void {
+    updateConfig(config: GenieOpsConfig): void {
         this.config = config;
         this.initializeClients();
     }

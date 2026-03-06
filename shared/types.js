@@ -1,12 +1,12 @@
 "use strict";
 /**
- * OmniOps - Shared Types
+ * GenieOps - Shared Types
  *
  * TypeScript interfaces and types shared between
  * VS Code Extension and MCP Server
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ErrorCode = exports.OmniOpsError = exports.NotificationType = exports.ResourceType = exports.OAuthFlowType = exports.TaskStatus = exports.CommandType = exports.RuntimeEnvironment = exports.PackageManager = exports.ProjectFramework = exports.ConnectionStatus = exports.ServiceType = exports.AIModelProvider = void 0;
+exports.ErrorCode = exports.GenieOpsError = exports.NotificationType = exports.ResourceType = exports.OAuthFlowType = exports.TaskStatus = exports.CommandType = exports.RuntimeEnvironment = exports.PackageManager = exports.ProjectFramework = exports.ConnectionStatus = exports.ServiceType = exports.AIModelProvider = void 0;
 /**
  * AI Model Provider Types
  */
@@ -235,17 +235,17 @@ var NotificationType;
 /**
  * Error Types
  */
-class OmniOpsError extends Error {
+class GenieOpsError extends Error {
     constructor(message, code, service, retryable = false, details) {
         super(message);
         this.code = code;
         this.service = service;
         this.retryable = retryable;
         this.details = details;
-        this.name = 'OmniOpsError';
+        this.name = 'GenieOpsError';
     }
 }
-exports.OmniOpsError = OmniOpsError;
+exports.GenieOpsError = GenieOpsError;
 var ErrorCode;
 (function (ErrorCode) {
     ErrorCode["AUTH_FAILED"] = "AUTH_FAILED";

@@ -7,9 +7,7 @@ import {
     PackageManager,
     RuntimeEnvironment,
     ServiceType
-} from '../../shared/types';
-import * as path from 'path';
-import * as fs from 'fs';
+} from '../shared/types';
 
 /**
  * Project analysis result
@@ -93,7 +91,7 @@ export class ProjectAnalyzer {
         const files: string[] = [];
 
         try {
-            const entries = await fs.promises.readdir(projectPath, { withFileTypes: true });
+            const entries = await fs.readdir(projectPath, { withFileTypes: true });
 
             for (const entry of entries) {
                 files.push(entry.name);
@@ -101,7 +99,7 @@ export class ProjectAnalyzer {
                 // Check common directories
                 if (entry.isDirectory() && ['.github', '.gitlab', '.circleci', 'test', 'tests', '__tests__', 'src'].includes(entry.name)) {
                     const subPath = path.join(projectPath, entry.name);
-                    const subEntries = await fs.promises.readdir(subPath);
+                    const subEntries = await fs.readdir(subPath);
                     files.push(...subEntries.map(f => `${entry.name}/${f}`));
                 }
             }
@@ -134,7 +132,7 @@ export class ProjectAnalyzer {
             // Detect framework from package.json
             try {
                 const pkgPath = path.join(projectPath, 'package.json');
-                const pkg = JSON.parse(await fs.promises.readFile(pkgPath, 'utf-8'));
+                const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf-8'));
                 const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
 
                 if (allDeps['next']) { analysis.framework = 'Next.js'; }
@@ -233,7 +231,7 @@ export class ProjectAnalyzer {
     private async parsePackageJson(projectPath: string, analysis: ProjectAnalysis): Promise<void> {
         try {
             const pkgPath = path.join(projectPath, 'package.json');
-            const content = await fs.promises.readFile(pkgPath, 'utf-8');
+            const content = await fs.readFile(pkgPath, 'utf-8');
             const pkg = JSON.parse(content);
 
             analysis.dependencies = Object.keys(pkg.dependencies || {});
@@ -292,7 +290,7 @@ export class ProjectAnalyzer {
         // Check for .env.example
         try {
             const envExamplePath = path.join(projectPath, '.env.example');
-            const envContent = await fs.promises.readFile(envExamplePath, 'utf-8');
+            const envContent = await fs.readFile(envExamplePath, 'utf-8');
 
             if (envContent.includes('AWS')) { services.add('AWS'); }
             if (envContent.includes('STRIPE')) { services.add('Stripe'); }

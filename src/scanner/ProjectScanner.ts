@@ -7,7 +7,7 @@ import {
     PackageManager,
     RuntimeEnvironment,
     ServiceType
-} from '../../shared/types';
+} from '../shared/types';
 
 export class ProjectAnalyzer {
 

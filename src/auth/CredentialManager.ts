@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ServiceType, ServiceConnection, ConnectionStatus, OAuthTokens } from '../../shared/types';
+import { ServiceType, ServiceConnection, ConnectionStatus, OAuthTokens } from '../shared/types';
 
 export class CredentialManager {
     private readonly secretStorage: vscode.SecretStorage;
@@ -61,7 +61,7 @@ export class CredentialManager {
                 scope: stored.scope
             };
         } catch (error) {
-            console.error(`Error parsing OAuth tokens for ${service}:`, error);
+            // Error parsing tokens - return null
             return null;
         }
     }
@@ -69,7 +69,7 @@ export class CredentialManager {
     /**
      * Store API key for a service
      */
-    async storeApiKey(service: ServiceType, apiKey: string, metadata?: Record<string, any>): Promise<void> {
+    async storeApiKey(service: ServiceType, apiKey: string, metadata?: Record<string, unknown>): Promise<void> {
         const key = this.getSecretKey(service, 'api-key');
         const value = JSON.stringify({
             apiKey,
@@ -97,7 +97,7 @@ export class CredentialManager {
             const stored = JSON.parse(value);
             return stored.apiKey;
         } catch (error) {
-            console.error(`Error parsing API key for ${service}:`, error);
+            // Error parsing API key - return null
             return null;
         }
     }
@@ -105,7 +105,7 @@ export class CredentialManager {
     /**
      * Store generic credentials (username/password, tokens, etc.)
      */
-    async storeCredentials(service: ServiceType, credentials: Record<string, any>): Promise<void> {
+    async storeCredentials(service: ServiceType, credentials: Record<string, unknown>): Promise<void> {
         const key = this.getSecretKey(service, 'credentials');
         const value = JSON.stringify({
             ...credentials,
@@ -120,7 +120,7 @@ export class CredentialManager {
     /**
      * Retrieve generic credentials
      */
-    async getCredentials(service: ServiceType): Promise<Record<string, any> | null> {
+    async getCredentials(service: ServiceType): Promise<Record<string, unknown> | null> {
         const key = this.getSecretKey(service, 'credentials');
         const value = await this.secretStorage.get(key);
 
@@ -130,10 +130,11 @@ export class CredentialManager {
 
         try {
             const stored = JSON.parse(value);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { storedAt, ...credentials } = stored;
             return credentials;
         } catch (error) {
-            console.error(`Error parsing credentials for ${service}:`, error);
+            // Error parsing credentials - return null
             return null;
         }
     }
@@ -190,7 +191,7 @@ export class CredentialManager {
     /**
      * Store connection metadata (region, project ID, workspace, etc.)
      */
-    async storeMetadata(service: ServiceType, metadata: Record<string, any>): Promise<void> {
+    async storeMetadata(service: ServiceType, metadata: Record<string, unknown>): Promise<void> {
         const key = this.getSecretKey(service, 'metadata');
         const value = JSON.stringify({
             ...metadata,
@@ -202,7 +203,7 @@ export class CredentialManager {
     /**
      * Retrieve connection metadata
      */
-    async getMetadata(service: ServiceType): Promise<Record<string, any> | null> {
+    async getMetadata(service: ServiceType): Promise<Record<string, unknown> | null> {
         const key = this.getSecretKey(service, 'metadata');
         const value = await this.secretStorage.get(key);
 
@@ -212,10 +213,11 @@ export class CredentialManager {
 
         try {
             const stored = JSON.parse(value);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { updatedAt, ...metadata } = stored;
             return metadata;
         } catch (error) {
-            console.error(`Error parsing metadata for ${service}:`, error);
+            // Error parsing metadata - return null
             return null;
         }
     }
@@ -233,16 +235,15 @@ export class CredentialManager {
         const metadata = await this.getMetadata(service);
         const credentials = await this.getCredentials(service);
         const apiKey = await this.getApiKey(service);
-        const tokens = await this.getOAuthTokens(service);
 
         return {
             id: service,
             type: service,
             status,
             displayName: this.getServiceDisplayName(service),
-            connectedAt: metadata?.connectedAt ? new Date(metadata.connectedAt) : new Date(),
-            lastUsed: metadata?.lastUsed ? new Date(metadata.lastUsed) : undefined,
-            credentials: credentials || (apiKey ? { apiKey } : undefined),
+            connectedAt: metadata?.connectedAt ? new Date(metadata.connectedAt as string | number | Date) : new Date(),
+            lastUsed: metadata?.lastUsed ? new Date(metadata.lastUsed as string | number | Date) : undefined,
+            credentials: (credentials as { [key: string]: string }) || (apiKey ? { apiKey } : undefined),
             metadata
         };
     }
@@ -276,7 +277,7 @@ export class CredentialManager {
     /**
      * Refresh OAuth token if refresh token is available
      */
-    async refreshOAuthToken(service: ServiceType, refreshTokenFn: (refreshToken: string) => Promise<OAuthTokens>): Promise<boolean> {
+    async refreshOAuthToken(service: ServiceType, refreshTokenFn: (token: string) => Promise<OAuthTokens>): Promise<boolean> {
         const tokens = await this.getOAuthTokens(service);
 
         if (!tokens?.refreshToken) {
@@ -288,7 +289,7 @@ export class CredentialManager {
             await this.storeOAuthTokens(service, newTokens);
             return true;
         } catch (error) {
-            console.error(`Error refreshing OAuth token for ${service}:`, error);
+            // Error refreshing token
             await this.updateConnectionStatus(service, ConnectionStatus.ERROR);
             return false;
         }
@@ -298,7 +299,7 @@ export class CredentialManager {
      * Generate secret storage key for a service and type
      */
     private getSecretKey(service: ServiceType, type: 'oauth' | 'api-key' | 'credentials' | 'metadata' | 'status'): string {
-        return `omniops.${service}.${type}`;
+        return `genieops.${service}.${type}`;
     }
 
     /**
@@ -368,11 +369,10 @@ export class CredentialManager {
      * Export credentials to external vault (Doppler, AWS Secrets Manager, etc.)
      * Only exports if user has enabled vault sync in settings
      */
-    async syncToExternalVault(vaultProvider: 'doppler' | 'aws-secrets-manager' | 'hashicorp-vault'): Promise<boolean> {
+    async syncToExternalVault(_vaultProvider: 'doppler' | 'aws-secrets-manager' | 'hashicorp-vault'): Promise<boolean> {
         // TODO: Implement vault sync
         // This would be called when user enables vault sync in settings
         // For now, return false as not implemented
-        console.log(`Vault sync to ${vaultProvider} not yet implemented`);
         return false;
     }
 }

@@ -282,6 +282,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
+    "@google/generative-ai": "^0.24.1",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "axios": "^1.6.5",
     "dockerode": "^4.0.2",

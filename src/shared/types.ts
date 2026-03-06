@@ -1,5 +1,5 @@
 /**
- * OmniOps - Shared Types
+ * GenieOps - Shared Types
  * 
  * TypeScript interfaces and types shared between
  * VS Code Extension and MCP Server
@@ -471,7 +471,7 @@ export interface ProgressUpdate {
 /**
  * Configuration Types
  */
-export interface OmniOpsConfig {
+export interface GenieOpsConfig {
     telemetryEnabled: boolean;
     autoAnalyzeProject: boolean;
     showProgressNotifications: boolean;
@@ -522,7 +522,7 @@ export interface OmniOpsConfig {
 /**
  * Error Types
  */
-export class OmniOpsError extends Error {
+export class GenieOpsError extends Error {
     constructor(
         message: string,
         public code: string,
@@ -531,7 +531,7 @@ export class OmniOpsError extends Error {
         public details?: any
     ) {
         super(message);
-        this.name = 'OmniOpsError';
+        this.name = 'GenieOpsError';
     }
 }
 
